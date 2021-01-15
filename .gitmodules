@@ -1,0 +1,9 @@
+[submodule "Module/AUIPlugin"]
+	path = Module/AUIPlugin
+	url = https://github.com/alittlesail/ALittle-AUIPlugin.git
+[submodule "Server/VersionServer"]
+	path = Server/VersionServer
+	url = https://github.com/alittlesail/ALittle-VersionServer.git
+[submodule "Server/GatewayServer"]
+	path = Server/GatewayServer
+	url = https://github.com/alittlesail/ALittle-GatewayServer.git
