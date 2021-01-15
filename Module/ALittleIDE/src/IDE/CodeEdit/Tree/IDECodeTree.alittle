@@ -67,9 +67,12 @@ public class IDECodeTree : IDECodeTreeLogic
 			menu.AddItem("添加服务", bind(this.HandleAddServer, this));
         }
 
-		var can_remove = this._user_info.root && this._user_info.module_name != "Std" && this._user_info.module_name != "Core" && this._user_info.module_name != "CEngine"
+		var can_remove = this._user_info.root && this._user_info.module_name != "Std"
+        				&& this._user_info.module_name != "Core"
+        				&& this._user_info.module_name != "CEngine"
+        				&& this._user_info.module_name != "SEngine"
 						&& this._user_info.module_name != g_IDEProject.project.name;
-		if (can_remove) menu.AddItem("移除模块", bind(this.HandleRemoveModule, this));
+		if (can_remove) menu.AddItem("移除", bind(this.HandleRemoveModuleOrServer, this));
 			
 		menu.Show();
     }
@@ -128,16 +131,33 @@ public class IDECodeTree : IDECodeTreeLogic
         this.RemoveFromParent();
     }
 
-	private async fun HandleRemoveModule()
+	private async fun HandleRemoveModuleOrServer()
 	{
 		var file_name = ALittle.File_GetFileNameByPath(this._user_info.path);
 		var result = g_AUITool.DeleteNotice("移除", "确定要移除"..file_name.."模块吗?");
 		if (result != AUIPlugin.AUIToolOption.YES) return;
 		this.OnDelete();
         this.RemoveFromParent();
-		var module_map = g_IDEProject.project.config.GetConfig("code_module", new Map<string, IDECodeModuleInfo>());
-        module_map[this._user_info.module_name] = null;
-        g_IDEProject.project.config.SetConfig("code_module", module_map);
+		var client_module_list = g_IDEProject.project.config.GetConfig("client_module", new List<IDECodeModuleInfo>());
+        for (var index, module in client_module_list)
+        {
+            if (module.module_name == this._user_info.module_name)
+            {
+                ALittle.List_Remove(client_module_list, index);
+                g_IDEProject.project.config.SetConfig("client_module", client_module_list);
+                break;
+            }
+        }
+        var server_module_list = g_IDEProject.project.config.GetConfig("server_module", new List<IDECodeModuleInfo>());
+        for (var index, module in server_module_list)
+        {
+            if (module.module_name == this._user_info.module_name)
+            {
+                ALittle.List_Remove(server_module_list, index);
+                g_IDEProject.project.config.SetConfig("server_module", server_module_list);
+                break;
+            }
+        }
     }
 	
 	public get is_tree() : bool { return true; }

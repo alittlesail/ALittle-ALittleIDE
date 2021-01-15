@@ -108,21 +108,6 @@ public class IDEUICodeList : ALittle.DisplayLayout
 		info.project = g_IDEProject.project.code;
 		this._code_scroll_screen.AddChild(new IDECodeTree(g_Control, info));
 		
-		var std_list = ["Core", "Std", "CEngine", "SEngine"];
-		for (var index, name in std_list)
-        {
-            info = new IDECodeTreeUserInfo();
-            info.module_name = name;
-            info.name = "src";
-            info.path = ALittle.File_BaseFilePath().."Module/ALittleIDE/Other/GameLibrary/"..name.."/src";
-            info.module_path = ALittle.File_BaseFilePath().."Module/ALittleIDE/Other/GameLibrary/"..name.."/";
-            info.group = this._group;
-            info.root = true;
-            info.project = g_IDEProject.project.code;
-            var tree = new IDECodeTree(g_Control, info);
-            this._code_scroll_screen.AddChild(tree);
-        }
-
 		// 读取客户端项目配置
 		var client_module_list = g_IDEProject.project.config.GetConfig("client_module", new List<IDECodeModuleInfo>());
         ALittle.List_Sort(client_module_list, IDEUICodeList.CodeModuleInfoSort);
@@ -147,6 +132,21 @@ public class IDEUICodeList : ALittle.DisplayLayout
 			info.root = true;
 			var tree = new IDECodeTree(g_Control, info);
 			this._code_scroll_screen.AddChild(tree);
+        }
+
+		var std_list = ["Core", "Std", "CEngine", "SEngine"];
+		for (var index, name in std_list)
+        {
+            info = new IDECodeTreeUserInfo();
+            info.module_name = name;
+            info.name = "src";
+            info.path = ALittle.File_BaseFilePath().."Module/ALittleIDE/Other/GameLibrary/"..name.."/src";
+            info.module_path = ALittle.File_BaseFilePath().."Module/ALittleIDE/Other/GameLibrary/"..name.."/";
+            info.group = this._group;
+            info.root = true;
+            info.project = g_IDEProject.project.code;
+            var tree = new IDECodeTree(g_Control, info);
+            this._code_scroll_screen.AddChild(tree);
         }
     }
 

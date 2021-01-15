@@ -105,19 +105,6 @@ function ALittleIDE.IDEUICodeList:HandleProjectOpen(event)
 	info.root = true
 	info.project = ALittleIDE.g_IDEProject.project.code
 	self._code_scroll_screen:AddChild(ALittleIDE.IDECodeTree(ALittleIDE.g_Control, info))
-	local std_list = {"Core", "Std", "CEngine", "SEngine"}
-	for index, name in ___ipairs(std_list) do
-		info = {}
-		info.module_name = name
-		info.name = "src"
-		info.path = ALittle.File_BaseFilePath() .. "Module/ALittleIDE/Other/GameLibrary/" .. name .. "/src"
-		info.module_path = ALittle.File_BaseFilePath() .. "Module/ALittleIDE/Other/GameLibrary/" .. name .. "/"
-		info.group = self._group
-		info.root = true
-		info.project = ALittleIDE.g_IDEProject.project.code
-		local tree = ALittleIDE.IDECodeTree(ALittleIDE.g_Control, info)
-		self._code_scroll_screen:AddChild(tree)
-	end
 	local client_module_list = ALittleIDE.g_IDEProject.project.config:GetConfig("client_module", {})
 	ALittle.List_Sort(client_module_list, ALittleIDE.IDEUICodeList.CodeModuleInfoSort)
 	local server_module_list = ALittleIDE.g_IDEProject.project.config:GetConfig("server_module", {})
@@ -134,6 +121,19 @@ function ALittleIDE.IDEUICodeList:HandleProjectOpen(event)
 		info.group = self._group
 		info.project = ALittleIDE.g_IDEProject.project.code
 		info.root = true
+		local tree = ALittleIDE.IDECodeTree(ALittleIDE.g_Control, info)
+		self._code_scroll_screen:AddChild(tree)
+	end
+	local std_list = {"Core", "Std", "CEngine", "SEngine"}
+	for index, name in ___ipairs(std_list) do
+		info = {}
+		info.module_name = name
+		info.name = "src"
+		info.path = ALittle.File_BaseFilePath() .. "Module/ALittleIDE/Other/GameLibrary/" .. name .. "/src"
+		info.module_path = ALittle.File_BaseFilePath() .. "Module/ALittleIDE/Other/GameLibrary/" .. name .. "/"
+		info.group = self._group
+		info.root = true
+		info.project = ALittleIDE.g_IDEProject.project.code
 		local tree = ALittleIDE.IDECodeTree(ALittleIDE.g_Control, info)
 		self._code_scroll_screen:AddChild(tree)
 	end

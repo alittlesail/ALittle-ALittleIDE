@@ -95,9 +95,9 @@ function ALittleIDE.IDECodeTree:HandleRButtonDown(event)
 		menu:AddItem("添加模块", Lua.Bind(self.HandleAddModule, self))
 		menu:AddItem("添加服务", Lua.Bind(self.HandleAddServer, self))
 	end
-	local can_remove = self._user_info.root and self._user_info.module_name ~= "Std" and self._user_info.module_name ~= "Core" and self._user_info.module_name ~= "CEngine" and self._user_info.module_name ~= ALittleIDE.g_IDEProject.project.name
+	local can_remove = self._user_info.root and self._user_info.module_name ~= "Std" and self._user_info.module_name ~= "Core" and self._user_info.module_name ~= "CEngine" and self._user_info.module_name ~= "SEngine" and self._user_info.module_name ~= ALittleIDE.g_IDEProject.project.name
 	if can_remove then
-		menu:AddItem("移除模块", Lua.Bind(self.HandleRemoveModule, self))
+		menu:AddItem("移除", Lua.Bind(self.HandleRemoveModuleOrServer, self))
 	end
 	menu:Show()
 end
@@ -161,7 +161,7 @@ function ALittleIDE.IDECodeTree:HandleDeleteDir()
 end
 ALittleIDE.IDECodeTree.HandleDeleteDir = Lua.CoWrap(ALittleIDE.IDECodeTree.HandleDeleteDir)
 
-function ALittleIDE.IDECodeTree:HandleRemoveModule()
+function ALittleIDE.IDECodeTree:HandleRemoveModuleOrServer()
 	local file_name = ALittle.File_GetFileNameByPath(self._user_info.path)
 	local result = g_AUITool:DeleteNotice("移除", "确定要移除" .. file_name .. "模块吗?")
 	if result ~= "YES" then
@@ -169,11 +169,24 @@ function ALittleIDE.IDECodeTree:HandleRemoveModule()
 	end
 	self:OnDelete()
 	self:RemoveFromParent()
-	local module_map = ALittleIDE.g_IDEProject.project.config:GetConfig("code_module", {})
-	module_map[self._user_info.module_name] = nil
-	ALittleIDE.g_IDEProject.project.config:SetConfig("code_module", module_map)
+	local client_module_list = ALittleIDE.g_IDEProject.project.config:GetConfig("client_module", {})
+	for index, module in ___ipairs(client_module_list) do
+		if module.module_name == self._user_info.module_name then
+			ALittle.List_Remove(client_module_list, index)
+			ALittleIDE.g_IDEProject.project.config:SetConfig("client_module", client_module_list)
+			break
+		end
+	end
+	local server_module_list = ALittleIDE.g_IDEProject.project.config:GetConfig("server_module", {})
+	for index, module in ___ipairs(server_module_list) do
+		if module.module_name == self._user_info.module_name then
+			ALittle.List_Remove(server_module_list, index)
+			ALittleIDE.g_IDEProject.project.config:SetConfig("server_module", server_module_list)
+			break
+		end
+	end
 end
-ALittleIDE.IDECodeTree.HandleRemoveModule = Lua.CoWrap(ALittleIDE.IDECodeTree.HandleRemoveModule)
+ALittleIDE.IDECodeTree.HandleRemoveModuleOrServer = Lua.CoWrap(ALittleIDE.IDECodeTree.HandleRemoveModuleOrServer)
 
 function ALittleIDE.IDECodeTree.__getter:is_tree()
 	return true
