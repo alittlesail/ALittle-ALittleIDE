@@ -1,0 +1,13 @@
+
+namespace DeployServer;
+
+protected class WaitProcessExitJob : Job
+{
+    public await fun Execute(BuildInfo build_info) : string, string
+    {
+        var msg = new QWaitProcessExitExecute();
+        msg.detail = this._info.detail;
+        var error, rsp = HandleWaitProcessExitWorker(g_JobWorker, msg);
+        return error, null;
+    }
+}

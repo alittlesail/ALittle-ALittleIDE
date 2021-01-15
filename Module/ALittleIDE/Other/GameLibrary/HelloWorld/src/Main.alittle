@@ -1,0 +1,7 @@
+namespace HelloWorld;
+
+public static Main()
+{
+    ALittle.Log("HelloWorld");
+    A_Schedule.Run();
+}
