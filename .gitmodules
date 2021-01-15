@@ -1,9 +1,28 @@
 [submodule "Module/AUIPlugin"]
 	path = Module/AUIPlugin
 	url = https://github.com/alittlesail/ALittle-AUIPlugin.git
+	branch = master
 [submodule "Server/VersionServer"]
 	path = Server/VersionServer
 	url = https://github.com/alittlesail/ALittle-VersionServer.git
+	branch = master
 [submodule "Server/GatewayServer"]
 	path = Server/GatewayServer
 	url = https://github.com/alittlesail/ALittle-GatewayServer.git
+	branch = master
+[submodule "Module/ALittleIDE/Other/GameLibrary/Core"]
+	path = Module/ALittleIDE/Other/GameLibrary/Core
+	url = https://github.com/alittlesail/ALittle-Core.git
+	branch = master
+[submodule "Module/ALittleIDE/Other/GameLibrary/Std"]
+	path = Module/ALittleIDE/Other/GameLibrary/Std
+	url = https://github.com/alittlesail/ALittle-Std.git
+	branch = master
+[submodule "Module/ALittleIDE/Other/GameLibrary/CEngine"]
+	path = Module/ALittleIDE/Other/GameLibrary/CEngine
+	url = https://github.com/alittlesail/ALittle-CEngine.git
+	branch = master
+[submodule "Module/ALittleIDE/Other/GameLibrary/SEngine"]
+	path = Module/ALittleIDE/Other/GameLibrary/SEngine
+	url = https://github.com/alittlesail/ALittle-SEngine.git
+	branch = master
