@@ -2,14 +2,6 @@
 	path = Module/AUIPlugin
 	url = https://github.com/alittlesail/ALittle-AUIPlugin.git
 	branch = master
-[submodule "Server/VersionServer"]
-	path = Server/VersionServer
-	url = https://github.com/alittlesail/ALittle-VersionServer.git
-	branch = master
-[submodule "Server/GatewayServer"]
-	path = Server/GatewayServer
-	url = https://github.com/alittlesail/ALittle-GatewayServer.git
-	branch = master
 [submodule "Module/ALittleIDE/Other/GameLibrary/Core"]
 	path = Module/ALittleIDE/Other/GameLibrary/Core
 	url = https://github.com/alittlesail/ALittle-Core.git
