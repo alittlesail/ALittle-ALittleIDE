@@ -107,7 +107,7 @@ function ALittleIDE.IDEUIMainMenu:HandleGenCoreAllInOneClick()
 				return
 			end
 		end
-		local result = ALittle.File_WriteTextFromStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/Core/JSNative/Core.js")
+		local result = ALittle.File_WriteTextToStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/Core/JSNative/Core.js")
 		if not result then
 			g_AUITool:ShowNotice("提示", "生成失败")
 			return
@@ -137,7 +137,7 @@ function ALittleIDE.IDEUIMainMenu:HandleGenCoreAllInOneClick()
 				return
 			end
 		end
-		local result = ALittle.File_WriteTextFromStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/Core/LuaNative/Core.lua")
+		local result = ALittle.File_WriteTextToStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/Core/LuaNative/Core.lua")
 		if not result then
 			g_AUITool:ShowNotice("提示", "生成失败")
 			return
@@ -199,7 +199,7 @@ function ALittleIDE.IDEUIMainMenu:HandleGenStdAllInOneClick()
 				return
 			end
 		end
-		local result = ALittle.File_WriteTextFromStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/Std/JSNative/Std.js")
+		local result = ALittle.File_WriteTextToStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/Std/JSNative/Std.js")
 		if not result then
 			g_AUITool:ShowNotice("提示", "生成失败")
 			return
@@ -253,7 +253,7 @@ function ALittleIDE.IDEUIMainMenu:HandleGenStdAllInOneClick()
 				return
 			end
 		end
-		local result = ALittle.File_WriteTextFromStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/Std/LuaNative/Std.lua")
+		local result = ALittle.File_WriteTextToStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/Std/LuaNative/Std.lua")
 		if not result then
 			g_AUITool:ShowNotice("提示", "生成失败")
 			return
@@ -344,7 +344,7 @@ function ALittleIDE.IDEUIMainMenu:HandleGenCEngineAllInOneClick()
 		local len = ALittle.String_Len(content)
 		if file_size + len >= 500 * 1024 then
 			if all_in_one ~= nil then
-				local result = ALittle.File_WriteTextFromStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/CEngine/JSNative/CEngine" .. file_index .. ".js")
+				local result = ALittle.File_WriteTextToStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/CEngine/JSNative/CEngine" .. file_index .. ".js")
 				if not result then
 					g_AUITool:ShowNotice("提示", "生成失败")
 					return
@@ -365,7 +365,7 @@ function ALittleIDE.IDEUIMainMenu:HandleGenCEngineAllInOneClick()
 		end
 	end
 	if all_in_one ~= nil then
-		local result = ALittle.File_WriteTextFromStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/CEngine/JSNative/CEngine" .. file_index .. ".js")
+		local result = ALittle.File_WriteTextToStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/CEngine/JSNative/CEngine" .. file_index .. ".js")
 		if not result then
 			g_AUITool:ShowNotice("提示", "生成失败")
 			return

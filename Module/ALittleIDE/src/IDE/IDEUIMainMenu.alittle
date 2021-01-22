@@ -122,7 +122,7 @@ protected class IDEUIMainMenu : ALittle.Linear
     				return;
                 }
     		}
-    		var result = ALittle.File_WriteTextFromStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/Core/JSNative/Core.js");
+    		var result = ALittle.File_WriteTextToStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/Core/JSNative/Core.js");
             if (!result)
             {
                 g_AUITool.ShowNotice("提示", "生成失败");
@@ -157,7 +157,7 @@ protected class IDEUIMainMenu : ALittle.Linear
     				return;
                 }
     		}
-    		var result = ALittle.File_WriteTextFromStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/Core/LuaNative/Core.lua");
+    		var result = ALittle.File_WriteTextToStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/Core/LuaNative/Core.lua");
             if (!result)
             {
                 g_AUITool.ShowNotice("提示", "生成失败");
@@ -231,7 +231,7 @@ protected class IDEUIMainMenu : ALittle.Linear
     				return;
                 }
     		}
-    		var result = ALittle.File_WriteTextFromStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/Std/JSNative/Std.js");
+    		var result = ALittle.File_WriteTextToStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/Std/JSNative/Std.js");
             if (!result)
             {
                 g_AUITool.ShowNotice("提示", "生成失败");
@@ -297,7 +297,7 @@ protected class IDEUIMainMenu : ALittle.Linear
     				return;
                 }
     		}
-    		var result = ALittle.File_WriteTextFromStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/Std/LuaNative/Std.lua");
+    		var result = ALittle.File_WriteTextToStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/Std/LuaNative/Std.lua");
             if (!result)
             {
                 g_AUITool.ShowNotice("提示", "生成失败");
@@ -395,7 +395,7 @@ protected class IDEUIMainMenu : ALittle.Linear
 			{
                 if (all_in_one != null)
 				{
-					var result = ALittle.File_WriteTextFromStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/CEngine/JSNative/CEngine"..file_index..".js");
+					var result = ALittle.File_WriteTextToStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/CEngine/JSNative/CEngine"..file_index..".js");
 					if (!result)
 					{
 						g_AUITool.ShowNotice("提示", "生成失败");
@@ -420,7 +420,7 @@ protected class IDEUIMainMenu : ALittle.Linear
 
 		if (all_in_one != null)
 		{
-			var result = ALittle.File_WriteTextFromStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/CEngine/JSNative/CEngine"..file_index..".js");
+			var result = ALittle.File_WriteTextToStdFile(ALittle.String_Join(all_in_one, "\n"), "Module/ALittleIDE/Other/GameLibrary/CEngine/JSNative/CEngine"..file_index..".js");
 			if (!result)
 			{
 				g_AUITool.ShowNotice("提示", "生成失败");
