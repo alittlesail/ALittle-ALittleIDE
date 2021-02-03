@@ -2,6 +2,7 @@
 /ALittleIDE.cfg
 /Server/ALittle-DeployServer
 /Server/ALittle-DataServer
+/Server/ALittle-GatewayServer
 /Module/DeployClient
 /Module/ProtobufEmulator
 /Module/NESEmulator
