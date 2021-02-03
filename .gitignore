@@ -1,8 +1,6 @@
 /Log
 /ALittleIDE.cfg
-/Server/ALittle-DeployServer
-/Server/ALittle-DataServer
-/Server/ALittle-GatewayServer
+/Server
 /Module/DeployClient
 /Module/ProtobufEmulator
 /Module/NESEmulator
@@ -13,5 +11,3 @@
 /Module/BattleCity
 /Module/GBR
 /Module/AWorld
-/Server/Game-AWorldServer-Game
-/Server/Game-AWorldServer-Map
