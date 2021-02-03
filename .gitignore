@@ -10,4 +10,5 @@
 /Module/SuperMarioBros
 /Module/BattleCity
 /Module/GBR
-/Module/AWorld
+/Module/AWorldClient
+/Server/Game-AWorldServer
