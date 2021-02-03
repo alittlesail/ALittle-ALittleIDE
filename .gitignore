@@ -1,6 +1,7 @@
 /Log
 /ALittleIDE.cfg
 /Server/ALittle-DeployServer
+/Server/ALittle-DataServer
 /Module/DeployClient
 /Module/ProtobufEmulator
 /Module/NESEmulator
