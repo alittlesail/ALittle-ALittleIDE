@@ -11,4 +11,5 @@
 /Module/BattleCity
 /Module/GBR
 /Module/AWorldClient
-/Server/Game-AWorldServer
+/Server/Game-AWorldServer-Game
+/Server/Game-AWorldServer-Map
