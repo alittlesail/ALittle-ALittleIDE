@@ -1,0 +1,84 @@
+
+namespace ALittle;
+
+// 文件加载器
+[Language(Lua)]
+public class LuaClientFileLoader : IFileLoader
+{
+    public fun Load(string file_path) : string
+    {
+        var file = new carp.CarpLocalFile();
+        file.SetPath(file_path);
+        if (!file.Load(false)) return null;
+        var content = file.GetContent();
+        file.Clear();
+        return content;
+    }
+}
+
+// 文件保存器
+[Language(Lua)]
+public class LuaClientFileSaver : IFileSaver
+{
+    public fun Save(string file_path, string content) : bool
+    {
+        return File_SaveFile(file_path, content, -1);
+    }
+}
+
+// 文件加载器
+[Language(JavaScript)]
+public class JClientFileLoader : IFileLoader
+{
+    public fun Load(string file_path) : string
+    {
+        if (window.wx != null)
+        {
+            var content = window.wx.getStorageSync(file_path);
+            if (content == null) return null;
+            if (javascript.typeof(content) != "string") return null;
+            return content;
+        }
+
+        if (window.localStorage != null)
+        {
+            var content = window.localStorage.getItem(file_path);
+            if (content == null) return null;
+            if (javascript.typeof(content) != "string") return null;
+            return content;
+        }
+
+        return null;
+    }
+}
+
+// 文件保存期
+[Language(JavaScript)]
+public class JClientFileSaver : IFileSaver
+{
+    public fun Save(string file_path, string content) : bool
+    {
+        if (window.wx != null)
+        {
+            window.wx.setStorageSync(file_path, content);
+            return true;
+        }
+
+        if (window.localStorage != null)
+        {
+        	window.localStorage.setItem(file_path, content);
+            return true;
+        }
+
+        return false;
+    }
+}
+
+public static CreateConfigSystem(string file_path, [Nullable] bool print_error) : IJsonConfig
+{
+    [Language(Lua)]
+    return new JsonConfig<LuaClientFileLoader, LuaClientFileSaver>(file_path, print_error);
+    
+    [Language(JavaScript)]
+    return new JsonConfig<JClientFileLoader, JClientFileSaver>(file_path, print_error);
+}

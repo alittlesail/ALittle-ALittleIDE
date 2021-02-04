@@ -1,0 +1,27 @@
+
+[Language(JavaScript)]
+register namespace javascript;
+
+public struct WorkerEvent
+{
+    any data;
+}
+
+// 主线程构建worker
+[Native]
+public class Worker
+{
+    public ctor(string uri) {}
+
+    // 接收支线程消息
+    public set onmessage(Functor<(WorkerEvent)> func) {}
+    // 向支线程发送消息
+    public fun postMessage(any data) {}
+    // 停止工作
+    public fun terminate() {}
+}
+
+// 支线程接收主线程消息
+public var onmessage:Functor<(WorkerEvent)>;
+// 支线程向主线程发送消息
+public static postMessage(any data) {}

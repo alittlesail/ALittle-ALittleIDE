@@ -44,7 +44,7 @@ function ALittleIDE.IDEUIAccount:TCtor()
 	ALittleIDE.g_IDEWebLoginManager:AddEventListener(___all_struct[-262794256], self, self.HandleAccountInReconnect)
 	ALittleIDE.g_IDEWebLoginManager:AddEventListener(___all_struct[-1848509213], self, self.HandleAccountInLogout)
 	ALittleIDE.g_IDEWebLoginManager:AddEventListener(___all_struct[-420010531], self, self.HandleAccountInLogin)
-	ALittleIDE.g_IDEWebLoginManager:Setup(logingate_ip, logingate_port, true, ALittleIDE.g_IDEConfig)
+	ALittleIDE.g_IDEWebLoginManager:Setup(logingate_ip, logingate_port, 3, ALittleIDE.g_IDEConfig)
 end
 
 function ALittleIDE.IDEUIAccount:Shutdown()

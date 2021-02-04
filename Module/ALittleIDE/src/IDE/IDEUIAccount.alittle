@@ -20,7 +20,7 @@ protected class IDEUIAccount : ALittle.DisplayLayout
 		g_IDEWebLoginManager.AddEventListener(this, this.HandleAccountInReconnect);
 		g_IDEWebLoginManager.AddEventListener(this, this.HandleAccountInLogout);
 		g_IDEWebLoginManager.AddEventListener(this, this.HandleAccountInLogin);
-		g_IDEWebLoginManager.Setup(logingate_ip, logingate_port, true, g_IDEConfig);
+		g_IDEWebLoginManager.Setup(logingate_ip, logingate_port, ALittle.RouteType.RT_VERSION, g_IDEConfig);
 	}
 	
 	public fun Shutdown()

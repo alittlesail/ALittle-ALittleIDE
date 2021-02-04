@@ -1,0 +1,11 @@
+
+[Language(JavaScript)]
+register namespace javascript;
+
+public class localStorage
+{
+    public fun setItem(string key, string value) {}
+    public fun getItem(string key) : string {}
+    public fun removeItem(string key) {}
+    public fun clear() {}
+}
