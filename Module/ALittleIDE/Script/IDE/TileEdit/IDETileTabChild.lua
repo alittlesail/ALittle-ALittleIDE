@@ -15,6 +15,12 @@ name_list = {"target","abs_x","abs_y","rel_x","rel_y","count","is_drag"},
 type_list = {"ALittle.DisplayObject","double","double","double","double","int","bool"},
 option_map = {}
 })
+ALittle.RegStruct(-1604617962, "ALittle.UIKeyDownEvent", {
+name = "ALittle.UIKeyDownEvent", ns_name = "ALittle", rl_name = "UIKeyDownEvent", hash_code = -1604617962,
+name_list = {"target","mod","sym","scancode","custom","handled"},
+type_list = {"ALittle.DisplayObject","int","int","int","bool","bool"},
+option_map = {}
+})
 ALittle.RegStruct(-1479093282, "ALittle.UIEvent", {
 name = "ALittle.UIEvent", ns_name = "ALittle", rl_name = "UIEvent", hash_code = -1479093282,
 name_list = {"target"},
@@ -49,6 +55,12 @@ ALittle.RegStruct(1264799606, "ALittleIDE.IDETileClipboard", {
 name = "ALittleIDE.IDETileClipboard", ns_name = "ALittleIDE", rl_name = "IDETileClipboard", hash_code = 1264799606,
 name_list = {"cell_map","tex_map","row_count","col_count"},
 type_list = {"Map<int,Map<int,ALittle.TileCell>>","Map<int,string>","int","int"},
+option_map = {}
+})
+ALittle.RegStruct(882286932, "ALittle.UIKeyEvent", {
+name = "ALittle.UIKeyEvent", ns_name = "ALittle", rl_name = "UIKeyEvent", hash_code = 882286932,
+name_list = {"target","mod","sym","scancode","custom","handled"},
+type_list = {"ALittle.DisplayObject","int","int","int","bool","bool"},
 option_map = {}
 })
 ALittle.RegStruct(-641444818, "ALittle.UIRButtonDownEvent", {
@@ -134,6 +146,7 @@ function ALittleIDE.IDETileTabChild:Ctor(ctrl_sys, module, name, save, user_info
 	self._tab_rb_quad:AddEventListener(___all_struct[1301789264], self, self.HandleQuadDragBegin)
 	self._tab_rb_quad:AddEventListener(___all_struct[1337289812], self, self.HandleQuadDrag)
 	self._tab_rb_quad:AddEventListener(___all_struct[150587926], self, self.HandleQuadDragEnd)
+	self._tab_rb_quad:AddEventListener(___all_struct[-1604617962], self, self.HandleQuadKeyDown)
 end
 
 function ALittleIDE.IDETileTabChild:HandleHandDrag(event)
@@ -142,6 +155,23 @@ end
 
 function ALittleIDE.IDETileTabChild:HandleSelect(event)
 	self._tile_select_rect.visible = false
+end
+
+function ALittleIDE.IDETileTabChild:HandleQuadKeyDown(event)
+	if event.sym == 99 and 1073742048 & event.mod ~= 0 then
+		if ALittleIDE.g_IDECenter.center.tile_select and self._tile_select_rect.visible then
+			self:HandleSelectCopy()
+		end
+	end
+	if event.sym == 120 and 1073742048 & event.mod ~= 0 then
+		if ALittleIDE.g_IDECenter.center.tile_select and self._tile_select_rect.visible then
+			self:HandleSelectCut()
+		end
+	end
+	if event.sym == 118 and 1073742048 & event.mod ~= 0 then
+		local rel_x, rel_y = self._tab_rb_quad:GlobalToLocalMatrix2D(A_UISystem.mouse_x, A_UISystem.mouse_y)
+		self:HandleSelectPaste(rel_x, rel_y)
+	end
 end
 
 function ALittleIDE.IDETileTabChild:HandleQuadRButtonDown(event)

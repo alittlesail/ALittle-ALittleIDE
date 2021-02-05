@@ -103,6 +103,7 @@ public class IDETileTabChild : IDETabChild
         this._tab_rb_quad.AddEventListener(this, this.HandleQuadDragBegin);
         this._tab_rb_quad.AddEventListener(this, this.HandleQuadDrag);
         this._tab_rb_quad.AddEventListener(this, this.HandleQuadDragEnd);
+        this._tab_rb_quad.AddEventListener(this, this.HandleQuadKeyDown);
     }
 
     private fun HandleHandDrag(IDEUICenterTileHandDragOpChangedEvent event)
@@ -113,6 +114,30 @@ public class IDETileTabChild : IDETabChild
     private fun HandleSelect(IDEUICenterTileSelectOpChangedEvent event)
     {
         this._tile_select_rect.visible = false;
+    }
+
+    private fun HandleQuadKeyDown(ALittle.UIKeyDownEvent event)
+    {
+        // Ctrl + C
+        if (event.sym == ALittle.UIEnumTypes.KEY_C && ALittle.UIEnumTypes.KEY_CTRL & event.mod != 0)
+        {
+            if (g_IDECenter.center.tile_select && this._tile_select_rect.visible)
+            	this.HandleSelectCopy();
+        }
+
+        // Ctrl + X
+        if (event.sym == ALittle.UIEnumTypes.KEY_X && ALittle.UIEnumTypes.KEY_CTRL & event.mod != 0)
+        {
+            if (g_IDECenter.center.tile_select && this._tile_select_rect.visible)
+            	this.HandleSelectCut();
+        }
+
+        // Ctrl + V
+        if (event.sym == ALittle.UIEnumTypes.KEY_V && ALittle.UIEnumTypes.KEY_CTRL & event.mod != 0)
+        {
+            var rel_x, rel_y = this._tab_rb_quad.GlobalToLocalMatrix2D(A_UISystem.mouse_x, A_UISystem.mouse_y);
+            this.HandleSelectPaste(rel_x, rel_y);
+        }
     }
 
     private fun HandleQuadRButtonDown(ALittle.UIRButtonDownEvent event)
