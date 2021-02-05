@@ -45,6 +45,18 @@ name_list = {"tile_type","side_len","tile_width","tile_height","tile_x","tile_y"
 type_list = {"int","int","int","int","int","int","int","int","Map<int,string>","List<ALittle.TileLayer>"},
 option_map = {}
 })
+ALittle.RegStruct(1264799606, "ALittleIDE.IDETileClipboard", {
+name = "ALittleIDE.IDETileClipboard", ns_name = "ALittleIDE", rl_name = "IDETileClipboard", hash_code = 1264799606,
+name_list = {"cell_map","tex_map","row_count","col_count"},
+type_list = {"Map<int,Map<int,ALittle.TileCell>>","Map<int,string>","int","int"},
+option_map = {}
+})
+ALittle.RegStruct(-641444818, "ALittle.UIRButtonDownEvent", {
+name = "ALittle.UIRButtonDownEvent", ns_name = "ALittle", rl_name = "UIRButtonDownEvent", hash_code = -641444818,
+name_list = {"target","abs_x","abs_y","rel_x","rel_y","count","is_drag"},
+type_list = {"ALittle.DisplayObject","double","double","double","double","int","bool"},
+option_map = {}
+})
 ALittle.RegStruct(-343663763, "ALittle.TileLayer", {
 name = "ALittle.TileLayer", ns_name = "ALittle", rl_name = "TileLayer", hash_code = -343663763,
 name_list = {"name","cell_map"},
@@ -64,6 +76,7 @@ type_list = {"int"},
 option_map = {}
 })
 
+local s_tile_clipboard = nil
 assert(ALittle.DisplayLayout, " extends class:ALittle.DisplayLayout is nil")
 ALittleIDE.IDETileContainer = Lua.Class(ALittle.DisplayLayout, "ALittleIDE.IDETileContainer")
 
@@ -114,7 +127,10 @@ function ALittleIDE.IDETileTabChild:Ctor(ctrl_sys, module, name, save, user_info
 	self._tile_container:AddChild(self._group_tile)
 	___rawset(self, "_layer_edit", ALittleIDE.g_Control:CreateControl("ide_tile_layer_detail_layout"))
 	ALittleIDE.g_IDECenter.center:AddEventListener(___all_struct[-751714957], self, self.HandleHandDrag)
+	ALittleIDE.g_IDECenter.center:AddEventListener(___all_struct[-459597925], self, self.HandleSelect)
+	self._tile_select_rect.visible = false
 	self._tab_rb_quad:AddEventListener(___all_struct[1883782801], self, self.HandleQuadLButtonDown)
+	self._tab_rb_quad:AddEventListener(___all_struct[-641444818], self, self.HandleQuadRButtonDown)
 	self._tab_rb_quad:AddEventListener(___all_struct[1301789264], self, self.HandleQuadDragBegin)
 	self._tab_rb_quad:AddEventListener(___all_struct[1337289812], self, self.HandleQuadDrag)
 	self._tab_rb_quad:AddEventListener(___all_struct[150587926], self, self.HandleQuadDragEnd)
@@ -122,6 +138,136 @@ end
 
 function ALittleIDE.IDETileTabChild:HandleHandDrag(event)
 	self._tab_rb_quad.hand_cursor = event.value
+end
+
+function ALittleIDE.IDETileTabChild:HandleSelect(event)
+	self._tile_select_rect.visible = false
+end
+
+function ALittleIDE.IDETileTabChild:HandleQuadRButtonDown(event)
+	if ALittleIDE.g_IDECenter.center.tile_select then
+		if self._tile_select_rect.visible then
+			local menu = AUIPlugin.AUIRightMenu()
+			menu:AddItem("复制", Lua.Bind(self.HandleSelectCopy, self))
+			menu:AddItem("剪切", Lua.Bind(self.HandleSelectCut, self))
+			menu:AddItem("粘贴", Lua.Bind(self.HandleSelectPaste, self, event.rel_x, event.rel_y))
+			menu:Show()
+		else
+			local menu = AUIPlugin.AUIRightMenu()
+			menu:AddItem("粘贴", Lua.Bind(self.HandleSelectPaste, self, event.rel_x, event.rel_y))
+			menu:Show()
+		end
+	end
+end
+
+function ALittleIDE.IDETileTabChild:CalcSelectTileRectByPos(layer, x, y, width, height)
+	local begin_row, begin_col = ALittle.Tile_CalcRowColByPos(self._user_info.tile_map, x, y)
+	if begin_row <= 0 or begin_col <= 0 then
+		return nil, nil, nil, nil, nil
+	end
+	local end_row, end_col = ALittle.Tile_CalcRowColByPos(self._user_info.tile_map, x + width, y + height)
+	if end_row <= 0 or end_col <= 0 then
+		return nil, nil, nil, nil, nil
+	end
+	local clipboard = self:CalcSelectTileRectByRowCol(layer, begin_row, begin_col, end_row, end_col)
+	return clipboard, begin_row, begin_col, end_row, end_col
+end
+
+function ALittleIDE.IDETileTabChild:CalcSelectTileRectByRowCol(layer, begin_row, begin_col, end_row, end_col)
+	local clipboard = {}
+	clipboard.cell_map = {}
+	clipboard.tex_map = {}
+	clipboard.row_count = end_row - begin_row + 1
+	clipboard.col_count = end_col - begin_col + 1
+	local row = begin_row
+	while true do
+		if not(row <= end_row) then break end
+		local row_cell = layer._layer.cell_map[row]
+		if row_cell ~= nil then
+			local col = begin_col
+			while true do
+				if not(col <= end_col) then break end
+				local cell = row_cell[col]
+				if cell ~= nil then
+					local clip_row = clipboard.cell_map[row - begin_row + 1]
+					if clip_row == nil then
+						clip_row = {}
+						clipboard.cell_map[row - begin_row + 1] = clip_row
+					end
+					clip_row[col - begin_col + 1] = ALittle.String_CopyTable(cell)
+					if cell.tex_id ~= nil then
+						clipboard.tex_map[cell.tex_id] = self._user_info.tile_map.tex_map[cell.tex_id]
+					end
+				end
+				col = col+(1)
+			end
+		end
+		row = row+(1)
+	end
+	return clipboard
+end
+
+function ALittleIDE.IDETileTabChild:HandleSelectCopy()
+	local cur_layer = self._layer_edit:GetCurLayerInfo()
+	if cur_layer == nil then
+		g_AUITool:ShowNotice("提示", "请先选中层")
+		return
+	end
+	local clipboard = self:CalcSelectTileRectByPos(cur_layer, self._tile_select_rect.x, self._tile_select_rect.y, self._tile_select_rect.width, self._tile_select_rect.height)
+	if clipboard == nil then
+		return
+	end
+	s_tile_clipboard = clipboard
+end
+
+function ALittleIDE.IDETileTabChild:HandleSelectCut()
+	local cur_layer, index = self._layer_edit:GetCurLayerInfo()
+	if cur_layer == nil then
+		g_AUITool:ShowNotice("提示", "请先选中层")
+		return
+	end
+	local clipboard, begin_row, begin_col, end_row, end_col = self:CalcSelectTileRectByPos(cur_layer, self._tile_select_rect.x, self._tile_select_rect.y, self._tile_select_rect.width, self._tile_select_rect.height)
+	if clipboard == nil then
+		return
+	end
+	s_tile_clipboard = clipboard
+	local revoke = ALittleIDE.IDETileSelectCutRevoke(self, cur_layer, clipboard, begin_row, begin_col, end_row, end_col)
+	self._revoke_list:PushRevoke(revoke)
+	revoke:Forward()
+	self.save = false
+end
+
+function ALittleIDE.IDETileTabChild:HandleSelectPaste(rel_x, rel_y)
+	local cur_layer, index = self._layer_edit:GetCurLayerInfo()
+	if cur_layer == nil then
+		g_AUITool:ShowNotice("提示", "请先选中层")
+		return
+	end
+	if s_tile_clipboard == nil then
+		return
+	end
+	local row_count, col_count = self:GetRowColCount()
+	local begin_row, begin_col = ALittle.Tile_CalcRowColByPos(self._user_info.tile_map, rel_x, rel_y)
+	ALittle.Log(row_count, col_count, begin_row, begin_col)
+	if begin_row > row_count or begin_col > col_count then
+		return
+	end
+	local end_row = begin_row + s_tile_clipboard.row_count - 1
+	local end_col = begin_col + s_tile_clipboard.col_count - 1
+	if end_row >= row_count then
+		end_row = row_count
+	end
+	if end_col >= col_count then
+		end_col = col_count
+	end
+	local old_clipboard = self:CalcSelectTileRectByRowCol(cur_layer, begin_row, begin_col, end_row, end_col)
+	if old_clipboard == nil then
+		return
+	end
+	local revoke = ALittleIDE.IDETileSelectPasteRevoke(self, cur_layer, old_clipboard, s_tile_clipboard, begin_row, begin_col, end_row, end_col)
+	self._revoke_list:PushRevoke(revoke)
+	revoke:Forward()
+	self.save = false
 end
 
 function ALittleIDE.IDETileTabChild:HandleQuadLButtonDown(event)
@@ -208,6 +354,14 @@ function ALittleIDE.IDETileTabChild:HandleQuadDragBegin(event)
 	if ALittleIDE.g_IDECenter.center.tile_handdrag then
 		event.target = self._tab_screen
 		self._tab_screen:DispatchEvent(___all_struct[1301789264], event)
+	elseif ALittleIDE.g_IDECenter.center.tile_select then
+		self._select_x = event.rel_x
+		self._select_y = event.rel_y
+		self._tile_select_rect.visible = true
+		self._tile_select_rect.width = 0
+		self._tile_select_rect.height = 0
+		self._tile_select_rect.x = self._select_x
+		self._tile_select_rect.y = self._select_y
 	end
 end
 
@@ -294,6 +448,21 @@ function ALittleIDE.IDETileTabChild:HandleQuadDrag(event)
 		local revoke = ALittleIDE.IDETileBrushCellRevoke(self, layer_info, cell, image, old_tex_path, nil)
 		self._revoke_list:PushRevoke(revoke)
 		self.save = false
+	elseif ALittleIDE.g_IDECenter.center.tile_select then
+		if event.rel_x > self._select_x then
+			self._tile_select_rect.x = self._select_x
+			self._tile_select_rect.width = event.rel_x - self._select_x
+		else
+			self._tile_select_rect.x = event.rel_x
+			self._tile_select_rect.width = self._select_x - event.rel_x
+		end
+		if event.rel_y > self._select_y then
+			self._tile_select_rect.y = self._select_y
+			self._tile_select_rect.height = event.rel_y - self._select_y
+		else
+			self._tile_select_rect.y = event.rel_y
+			self._tile_select_rect.height = self._select_y - event.rel_y
+		end
 	end
 end
 
@@ -303,6 +472,7 @@ function ALittleIDE.IDETileTabChild:HandleQuadDragEnd(event)
 		event.target = self._tab_screen
 		self._tab_screen:DispatchEvent(___all_struct[150587926], event)
 	elseif ALittleIDE.g_IDECenter.center.tile_erase then
+	elseif ALittleIDE.g_IDECenter.center.tile_select then
 	end
 	self._drag_cell_row = nil
 	self._drag_cell_col = nil
@@ -324,6 +494,7 @@ function ALittleIDE.IDETileTabChild:OnHide()
 end
 
 function ALittleIDE.IDETileTabChild:OnShow()
+	ALittleIDE.g_IDECenter.center:HideAllToolContainer()
 	ALittleIDE.g_IDECenter.center.tool_tile.visible = true
 	self._layer_edit.visible = true
 	ALittleIDE.g_IDECenter.center.detail_tree_tab.tab = ALittleIDE.g_IDECenter.center.tile_brush_edit
@@ -369,6 +540,23 @@ function ALittleIDE.IDETileTabChild:CreateLayer()
 	return group, linear_1, linear_2
 end
 
+function ALittleIDE.IDETileTabChild:GetRowColCount()
+	local cur_row_count = 0
+	local cur_col_count = 0
+	if self._user_info.tile_map.tile_type == 2 then
+		cur_row_count = self._linear_grid_1.child_count + self._linear_grid_2.child_count
+		if cur_row_count > 0 then
+			cur_col_count = self._linear_grid_1.childs[1].child_count
+		end
+	else
+		cur_row_count = self._linear_grid_1.child_count
+		if cur_row_count > 0 then
+			cur_col_count = self._linear_grid_1.childs[1].child_count + self._linear_grid_2.childs[1].child_count
+		end
+	end
+	return cur_row_count, cur_col_count
+end
+
 function ALittleIDE.IDETileTabChild:GetLayer(index)
 	local group = self._group_tile:GetChildByIndex(index)
 	if group == nil then
@@ -387,14 +575,46 @@ function ALittleIDE.IDETileTabChild:GetImage(layer, row, col)
 	local tile_type = self._user_info.tile_map.tile_type
 	if tile_type == 2 then
 		if row % 2 == 1 then
-			return linear_1.childs[ALittle.Math_Floor(row / 2) + 1].childs[col]._user_data
+			local sub_linear = linear_1.childs[ALittle.Math_Floor(row / 2) + 1]
+			if sub_linear == nil then
+				return nil
+			end
+			local child = sub_linear.childs[col]
+			if child == nil then
+				return nil
+			end
+			return child._user_data
 		end
-		return linear_2.childs[ALittle.Math_Floor(row / 2)].childs[col]._user_data
+		local sub_linear = linear_2.childs[ALittle.Math_Floor(row / 2)]
+		if sub_linear == nil then
+			return nil
+		end
+		local child = sub_linear.childs[col]
+		if child == nil then
+			return nil
+		end
+		return child._user_data
 	else
 		if col % 2 == 1 then
-			return linear_1.childs[row].childs[ALittle.Math_Floor(col / 2) + 1]._user_data
+			local sub_linear = linear_1.childs[row]
+			if sub_linear == nil then
+				return nil
+			end
+			local child = sub_linear.childs[ALittle.Math_Floor(col / 2) + 1]
+			if child == nil then
+				return nil
+			end
+			return child._user_data
 		end
-		return linear_2.childs[row].childs[ALittle.Math_Floor(col / 2)]._user_data
+		local sub_linear = linear_2.childs[row]
+		if sub_linear == nil then
+			return nil
+		end
+		local child = sub_linear.childs[ALittle.Math_Floor(col / 2)]
+		if child == nil then
+			return nil
+		end
+		return child._user_data
 	end
 end
 

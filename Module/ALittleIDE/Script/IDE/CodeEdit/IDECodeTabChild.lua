@@ -67,6 +67,7 @@ end
 
 function ALittleIDE.IDECodeTabChild:OnShow()
 	self._edit:OnShow()
+	ALittleIDE.g_IDECenter.center:HideAllToolContainer()
 	ALittleIDE.g_IDECenter.center.tool_code.visible = true
 end
 

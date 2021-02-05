@@ -1,6 +1,16 @@
 
 namespace ALittleIDE;
 
+public struct IDETileClipboard
+{
+    Map<int, Map<int, ALittle.TileCell>> cell_map;
+    Map<int, string> tex_map;	// 纹理ID映射的纹理路径
+    int row_count;
+    int col_count;
+}
+
+private var s_tile_clipboard:IDETileClipboard;
+
 public class IDETileContainer : ALittle.DisplayLayout
 {
     protected fun ClipRect(double x, double y, double width, double height, double h_move, double v_move)
@@ -42,6 +52,8 @@ public class IDETileTabChild : IDETabChild
     private IDETileLinearContainer _tile_container;
     private ALittle.DisplayLayout _tab_rb_quad;
 
+    private ALittle.DisplayLayout _tile_select_rect;
+
     // 格子
     private ALittle.Linear _linear_grid_1;
     private ALittle.Linear _linear_grid_2;
@@ -53,6 +65,9 @@ public class IDETileTabChild : IDETabChild
 
     private int _drag_cell_row;
     private int _drag_cell_col;
+
+    private double _select_x;
+    private double _select_y;
 
 	public ctor(ALittle.ControlSystem ctrl_sys, string module, string name, bool save, IDETileTreeUserInfo user_info)
 	{
@@ -79,8 +94,12 @@ public class IDETileTabChild : IDETabChild
         this._layer_edit = g_Control.CreateControl{IDEUITileLayerEdit}("ide_tile_layer_detail_layout");
 
         g_IDECenter.center.AddEventListener(this, this.HandleHandDrag);
+        g_IDECenter.center.AddEventListener(this, this.HandleSelect);
 
+        this._tile_select_rect.visible = false;
+        
         this._tab_rb_quad.AddEventListener(this, this.HandleQuadLButtonDown);
+        this._tab_rb_quad.AddEventListener(this, this.HandleQuadRButtonDown);
         this._tab_rb_quad.AddEventListener(this, this.HandleQuadDragBegin);
         this._tab_rb_quad.AddEventListener(this, this.HandleQuadDrag);
         this._tab_rb_quad.AddEventListener(this, this.HandleQuadDragEnd);
@@ -89,6 +108,151 @@ public class IDETileTabChild : IDETabChild
     private fun HandleHandDrag(IDEUICenterTileHandDragOpChangedEvent event)
     {
         this._tab_rb_quad.hand_cursor = event.value;
+    }
+
+    private fun HandleSelect(IDEUICenterTileSelectOpChangedEvent event)
+    {
+        this._tile_select_rect.visible = false;
+    }
+
+    private fun HandleQuadRButtonDown(ALittle.UIRButtonDownEvent event)
+    {
+        if (g_IDECenter.center.tile_select)
+        {
+            if (this._tile_select_rect.visible)
+            {
+                var menu = new AUIPlugin.AUIRightMenu();
+                menu.AddItem("复制", bind(this.HandleSelectCopy, this));
+                menu.AddItem("剪切", bind(this.HandleSelectCut, this));
+                menu.AddItem("粘贴", bind(this.HandleSelectPaste, this, event.rel_x, event.rel_y));
+                menu.Show();
+            }
+            else
+            {
+                var menu = new AUIPlugin.AUIRightMenu();
+                menu.AddItem("粘贴", bind(this.HandleSelectPaste, this, event.rel_x, event.rel_y));
+                menu.Show();
+            }
+        }
+    }
+
+    private fun CalcSelectTileRectByPos(IDEUITileLayerInfo layer, double x, double y, double width, double height) : IDETileClipboard, int, int, int, int
+    {
+        var begin_row, begin_col = ALittle.Tile_CalcRowColByPos(this._user_info.tile_map, x, y);
+        if (begin_row <= 0 || begin_col <= 0) return null, null, null, null, null;
+        var end_row, end_col = ALittle.Tile_CalcRowColByPos(this._user_info.tile_map, x + width, y + height);
+        if (end_row <= 0 || end_col <= 0) return null, null, null, null, null;
+        var clipboard = this.CalcSelectTileRectByRowCol(layer, begin_row, begin_col, end_row, end_col);
+        return clipboard, begin_row, begin_col, end_row, end_col;
+    }
+
+    private fun CalcSelectTileRectByRowCol(IDEUITileLayerInfo layer, int begin_row, int begin_col, int end_row, int end_col) : IDETileClipboard
+    {
+        var clipboard = new IDETileClipboard();
+        clipboard.cell_map = new Map<int, Map<int, ALittle.TileCell>>();
+        clipboard.tex_map = new Map<int, string>();
+        clipboard.row_count = end_row - begin_row + 1;
+        clipboard.col_count = end_col - begin_col + 1;
+        for (var row = begin_row; row <= end_row; 1)
+        {
+            var row_cell = layer._layer.cell_map[row];
+            if (row_cell != null)
+            {
+                for (var col = begin_col; col <= end_col; 1)
+                {
+                    var cell = row_cell[col];
+                    if (cell != null)
+                    {
+                        var clip_row = clipboard.cell_map[row - begin_row + 1];
+                        if (clip_row == null)
+                        {
+                            clip_row = new Map<int, ALittle.TileCell>();
+                            clipboard.cell_map[row - begin_row + 1] = clip_row;
+                        }
+                        clip_row[col - begin_col + 1] = ALittle.String_CopyTable(cell);
+
+                        if (cell.tex_id != null)
+                            clipboard.tex_map[cell.tex_id] = this._user_info.tile_map.tex_map[cell.tex_id];
+                    }
+                }
+            }
+        }
+
+        return clipboard;
+    }
+
+    private fun HandleSelectCopy()
+    {
+        var cur_layer = this._layer_edit.GetCurLayerInfo();
+        if (cur_layer == null)
+        {
+            g_AUITool.ShowNotice("提示","请先选中层");
+            return;
+        }
+
+        var clipboard = this.CalcSelectTileRectByPos(cur_layer
+                                               , this._tile_select_rect.x
+                                               , this._tile_select_rect.y
+                                               , this._tile_select_rect.width
+                                               , this._tile_select_rect.height);
+        if (clipboard == null) return;
+        s_tile_clipboard = clipboard;
+    }
+
+    private fun HandleSelectCut()
+    {
+        var cur_layer, index = this._layer_edit.GetCurLayerInfo();
+        if (cur_layer == null)
+        {
+            g_AUITool.ShowNotice("提示","请先选中层");
+            return;
+        }
+
+        var clipboard, begin_row, begin_col, end_row, end_col = this.CalcSelectTileRectByPos(cur_layer
+                                                                                       , this._tile_select_rect.x
+                                                                                       , this._tile_select_rect.y
+                                                                                       , this._tile_select_rect.width
+                                                                                       , this._tile_select_rect.height);
+        if (clipboard == null) return;
+        s_tile_clipboard = clipboard;
+
+        var revoke = new IDETileSelectCutRevoke(this, cur_layer, clipboard, begin_row, begin_col, end_row, end_col);
+        this._revoke_list.PushRevoke(revoke);
+        revoke.Forward();
+
+        this.save = false;
+    }
+
+    private fun HandleSelectPaste(double rel_x, double rel_y)
+    {
+        var cur_layer, index = this._layer_edit.GetCurLayerInfo();
+        if (cur_layer == null)
+        {
+            g_AUITool.ShowNotice("提示","请先选中层");
+            return;
+        }
+
+        if (s_tile_clipboard == null) return;
+        var row_count, col_count = this.GetRowColCount();
+        var begin_row, begin_col = ALittle.Tile_CalcRowColByPos(this._user_info.tile_map
+                                                               , rel_x
+                                                               , rel_y);
+        ALittle.Log(row_count, col_count, begin_row, begin_col);
+        if (begin_row > row_count || begin_col > col_count) return;
+
+        var end_row = begin_row + s_tile_clipboard.row_count - 1;
+        var end_col = begin_col + s_tile_clipboard.col_count - 1;
+        if (end_row >= row_count) end_row = row_count;
+        if (end_col >= col_count) end_col = col_count;
+
+        var old_clipboard = this.CalcSelectTileRectByRowCol(cur_layer, begin_row, begin_col, end_row, end_col);
+        if (old_clipboard == null) return;
+
+        var revoke = new IDETileSelectPasteRevoke(this, cur_layer, old_clipboard, s_tile_clipboard, begin_row, begin_col, end_row, end_col);
+        this._revoke_list.PushRevoke(revoke);
+        revoke.Forward();
+
+        this.save = false;
     }
 
     private fun HandleQuadLButtonDown(ALittle.UILButtonDownEvent event)
@@ -187,6 +351,17 @@ public class IDETileTabChild : IDETabChild
             event.target = this._tab_screen;
             this._tab_screen.DispatchEvent(event);
         }
+        elseif (g_IDECenter.center.tile_select)
+        {
+            this._select_x = event.rel_x;
+            this._select_y = event.rel_y;
+
+            this._tile_select_rect.visible = true;
+            this._tile_select_rect.width = 0;
+            this._tile_select_rect.height = 0;
+            this._tile_select_rect.x = this._select_x;
+            this._tile_select_rect.y = this._select_y;
+        }
     }
 
     private fun HandleQuadDrag(ALittle.UIButtonDragEvent event)
@@ -271,6 +446,30 @@ public class IDETileTabChild : IDETabChild
 
             this.save = false;
         }
+        elseif (g_IDECenter.center.tile_select)
+        {
+            if (event.rel_x > this._select_x)
+            {
+                this._tile_select_rect.x = this._select_x;
+                this._tile_select_rect.width = event.rel_x - this._select_x;
+            }
+            else
+            {
+                this._tile_select_rect.x = event.rel_x;
+                this._tile_select_rect.width = this._select_x - event.rel_x;
+            }
+
+            if (event.rel_y > this._select_y)
+            {
+                this._tile_select_rect.y = this._select_y;
+                this._tile_select_rect.height = event.rel_y - this._select_y;
+            }
+            else
+            {
+                this._tile_select_rect.y = event.rel_y;
+                this._tile_select_rect.height = this._select_y - event.rel_y;
+            }
+        }
     }
 
     private fun HandleQuadDragEnd(ALittle.UIButtonDragEndEvent event)
@@ -284,6 +483,10 @@ public class IDETileTabChild : IDETabChild
             this._tab_screen.DispatchEvent(event);
         }
         elseif (g_IDECenter.center.tile_erase)
+        {
+
+        }
+        elseif (g_IDECenter.center.tile_select)
         {
 
         }
@@ -303,6 +506,7 @@ public class IDETileTabChild : IDETabChild
     }
     private fun OnShow()
     {
+        g_IDECenter.center.HideAllToolContainer();
         g_IDECenter.center.tool_tile.visible = true;
         this._layer_edit.visible = true;
         g_IDECenter.center.detail_tree_tab.tab = g_IDECenter.center.tile_brush_edit;
@@ -357,6 +561,23 @@ public class IDETileTabChild : IDETabChild
         return group, linear_1, linear_2;
     }
 
+    public fun GetRowColCount() : int, int
+    {
+        var cur_row_count = 0;
+        var cur_col_count = 0;
+        if (this._user_info.tile_map.tile_type == ALittle.TileType.HEX_V)
+        {
+            cur_row_count = this._linear_grid_1.child_count + this._linear_grid_2.child_count;
+            if (cur_row_count > 0) cur_col_count = this._linear_grid_1.childs[1].child_count;
+        }
+        else
+        {
+            cur_row_count = this._linear_grid_1.child_count;
+            if (cur_row_count > 0) cur_col_count = this._linear_grid_1.childs[1].child_count + this._linear_grid_2.childs[1].child_count;
+        }
+        return cur_row_count, cur_col_count;
+    }
+
     public fun GetLayer(int index) : ALittle.DisplayGroup, ALittle.Linear, ALittle.Linear
     {
         var group = cast<ALittle.DisplayGroup>(this._group_tile.GetChildByIndex(index));
@@ -376,16 +597,36 @@ public class IDETileTabChild : IDETabChild
         if (tile_type == ALittle.TileType.HEX_V)
         {
             if (row % 2 == 1)
-                return linear_1.childs[ALittle.Math_Floor(row / 2) + 1].childs[col]._user_data;
+            {
+                var sub_linear = linear_1.childs[ALittle.Math_Floor(row / 2) + 1];
+                if (sub_linear == null) return null;
+                var child = sub_linear.childs[col];
+                if (child == null) return null;
+                return child._user_data;
+            }
 
-            return linear_2.childs[ALittle.Math_Floor(row / 2)].childs[col]._user_data;
+            var sub_linear = linear_2.childs[ALittle.Math_Floor(row / 2)];
+            if (sub_linear == null) return null;
+            var child = sub_linear.childs[col];
+            if (child == null) return null;
+            return child._user_data;
         }
         else
         {
             if (col % 2 == 1)
-                return linear_1.childs[row].childs[ALittle.Math_Floor(col / 2) + 1]._user_data;
-
-            return linear_2.childs[row].childs[ALittle.Math_Floor(col / 2)]._user_data;
+            {
+                var sub_linear = linear_1.childs[row];
+                if (sub_linear == null) return null;
+                var child = sub_linear.childs[ALittle.Math_Floor(col / 2) + 1];
+                if (child == null) return null;
+                return child._user_data;
+            }
+                
+            var sub_linear = linear_2.childs[row];
+            if (sub_linear == null) return null;
+            var child = sub_linear.childs[ALittle.Math_Floor(col / 2)];
+            if (child == null) return null;
+            return child._user_data;
         }
     }
 

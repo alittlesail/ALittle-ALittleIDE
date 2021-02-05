@@ -184,6 +184,7 @@ function ALittleIDE.IDEUITabChild:OnShow()
 	self._tree_screen.visible = true
 	self._attr_screen.visible = true
 	self._anti_panel.visible = true
+	ALittleIDE.g_IDECenter.center:HideAllToolContainer()
 	ALittleIDE.g_IDECenter.center.tool_ui.visible = true
 	ALittleIDE.g_IDECenter.center.detail_tree_tab.tab = ALittleIDE.g_IDECenter.center.control_tree
 	local panel_childs = self._attr_screen.childs

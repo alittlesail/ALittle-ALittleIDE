@@ -187,3 +187,195 @@ public class IDETileBrushCellRevoke : ALittle.RevokeObject
         }
 	}
 }
+
+public class IDETileSelectCutRevoke : ALittle.RevokeObject
+{
+	private IDETileTabChild _tab_child;
+    private IDEUITileLayerInfo _layer_info;
+
+    private IDETileClipboard _clipboard;
+    private int _begin_row;
+    private int _begin_col;
+    private int _end_row;
+    private int _end_col;
+
+	public ctor(IDETileTabChild tab_child, IDEUITileLayerInfo layer_info, IDETileClipboard clipboard, int begin_row, int begin_col, int end_row, int end_col)
+	{
+		this._tab_child = tab_child;
+        this._layer_info = layer_info;
+
+        this._clipboard = clipboard;
+        this._begin_row = begin_row;
+        this._begin_col = begin_col;
+        this._end_row = end_row;
+        this._end_col = end_col;
+	}
+
+	public fun Forward()
+	{
+        var index = this._tab_child.layer_edit.GetLayerInfoIndex(this._layer_info);
+        if (index == null) return;
+
+        for (var row = this._begin_row; row <= this._end_row; 1)
+        {
+            var row_cell = this._layer_info._layer.cell_map[row];
+            if (row_cell != null)
+            {
+                for (var col = this._begin_col; col <= this._end_col; 1)
+                {
+                    var cell = row_cell[col];
+                    if (cell != null) cell.tex_id = null;
+
+                    var image = this._tab_child.GetImage(index, row, col);
+                    if (image != null) image.SetTextureCut(null, 0, 0, true);
+                }
+            }
+        }
+	}
+
+	public fun Back()
+	{
+        var index = this._tab_child.layer_edit.GetLayerInfoIndex(this._layer_info);
+        if (index == null) return;
+
+        for (var row = this._begin_row; row <= this._end_row; 1)
+        {
+            var row_cell = this._layer_info._layer.cell_map[row];
+            if (row_cell != null)
+            {
+                for (var col = this._begin_col; col <= this._end_col; 1)
+                {
+                    var cell = row_cell[col];
+                    if (cell != null)
+                    {
+                        var old_row_cell = this._clipboard.cell_map[row - this._begin_row + 1];
+                        if (old_row_cell != null)
+                        {
+                            var old_cell = old_row_cell[col - this._begin_col + 1];
+                            if (old_cell != null)
+                            {
+                                var old_tex_path = this._clipboard.tex_map[old_cell.tex_id];
+                                var tex_id = this._layer_info._user_info.tex_id_map[old_tex_path];
+                                if (tex_id == null)
+                                {
+                                    tex_id = this._layer_info._user_info.tex_id_max + 1;
+                                    this._layer_info._user_info.tex_id_max = tex_id;
+                                    this._layer_info._user_info.tile_map.tex_map[tex_id] = old_tex_path;
+                                    this._layer_info._user_info.tex_id_map[old_tex_path] = tex_id;
+                                }
+                                cell.tex_id = tex_id;
+                                
+                                var image = this._tab_child.GetImage(index, row, col);
+                                if (image != null) image.SetTextureCut("Module/"..g_IDEProject.project.name.."/Texture/"..old_tex_path, 0, 0, true);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+	}
+}
+
+public class IDETileSelectPasteRevoke : ALittle.RevokeObject
+{
+	private IDETileTabChild _tab_child;
+    private IDEUITileLayerInfo _layer_info;
+
+    private IDETileClipboard _old_clipboard;
+    private IDETileClipboard _clipboard;
+    private int _begin_row;
+    private int _begin_col;
+    private int _end_row;
+    private int _end_col;
+
+	public ctor(IDETileTabChild tab_child, IDEUITileLayerInfo layer_info, IDETileClipboard old_clipboard, IDETileClipboard clipboard, int begin_row, int begin_col, int end_row, int end_col)
+	{
+		this._tab_child = tab_child;
+        this._layer_info = layer_info;
+
+        this._old_clipboard = old_clipboard;
+        this._clipboard = clipboard;
+        this._begin_row = begin_row;
+        this._begin_col = begin_col;
+        this._end_row = end_row;
+        this._end_col = end_col;
+	}
+
+    private fun PasteImpl(IDETileClipboard paste_clipboard)
+    {
+        var index = this._tab_child.layer_edit.GetLayerInfoIndex(this._layer_info);
+        if (index == null) return;
+
+        // 先清理
+        for (var row = this._begin_row; row <= this._end_row; 1)
+        {
+            var row_cell = this._layer_info._layer.cell_map[row];
+            if (row_cell != null)
+            {
+                for (var col = this._begin_col; col <= this._end_col; 1)
+                {
+                    var cell = row_cell[col];
+                    if (cell != null)
+                    {
+                        cell.tex_id = null;
+                        var image = this._tab_child.GetImage(index, row, col);
+                        if (image != null) image.SetTextureCut(null, 0, 0, true);
+                    }
+                }
+            }
+        }
+
+        // 再把剪切板的设置进去
+        for (var row = this._begin_row; row <= this._end_row; 1)
+        {
+            var paste_row_cell = paste_clipboard.cell_map[row - this._begin_row + 1];
+            if (paste_row_cell != null)
+            {
+                for (var col = this._begin_col; col <= this._end_col; 1)
+                {
+                    var paste_old_cell = paste_row_cell[col - this._begin_col + 1];
+                    if (paste_old_cell != null)
+                    {
+                        var row_cell = this._layer_info._layer.cell_map[row];
+                        if (row_cell == null)
+                        {
+                            row_cell = new Map<int, ALittle.TileCell>();
+                            this._layer_info._layer.cell_map[row] = row_cell;
+                        }
+                        var cell = row_cell[col];
+                        if (cell == null)
+                        {
+                            cell = new ALittle.TileCell();
+                            row_cell[col] = cell;
+                        }
+
+                        var old_tex_path = paste_clipboard.tex_map[paste_old_cell.tex_id];
+
+                        var tex_id = this._layer_info._user_info.tex_id_map[old_tex_path];
+                        if (tex_id == null)
+                        {
+                            tex_id = this._layer_info._user_info.tex_id_max + 1;
+                            this._layer_info._user_info.tex_id_max = tex_id;
+                            this._layer_info._user_info.tile_map.tex_map[tex_id] = old_tex_path;
+                            this._layer_info._user_info.tex_id_map[old_tex_path] = tex_id;
+                        }
+                        cell.tex_id = tex_id;
+                    
+                        var image = this._tab_child.GetImage(index, row, col);
+                        if (image != null) image.SetTextureCut("Module/"..g_IDEProject.project.name.."/Texture/"..old_tex_path, 0, 0, true);
+                    }
+                }
+            }
+        }
+    }
+
+	public fun Forward()
+	{
+        this.PasteImpl(this._clipboard);
+	}
+
+	public fun Back()
+	{
+        this.PasteImpl(this._old_clipboard);
+	}
+}

@@ -31,6 +31,7 @@ public class IDECodeTabChild : IDETabChild
     private fun OnShow()
     {
         this._edit.OnShow();
+        g_IDECenter.center.HideAllToolContainer();
         g_IDECenter.center.tool_code.visible = true;
     }
     private fun OnClose() { this._edit.OnClose(); }

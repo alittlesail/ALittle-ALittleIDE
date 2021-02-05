@@ -41,6 +41,10 @@ public struct IDEUICenterTileEraseOpChangedEvent : ALittle.UIEvent
     bool value;
 }
 
+public struct IDEUICenterTileSelectOpChangedEvent : ALittle.UIEvent
+{
+    bool value;
+}
 
 protected class IDEUICenter : ALittle.DisplayLayout
 {
@@ -87,17 +91,18 @@ protected class IDEUICenter : ALittle.DisplayLayout
 	private ALittle.TextRadioButton _tool_tile_brush;			// 笔刷模式
 	private ALittle.TextRadioButton _tool_tile_handdrag;				// 拖拽模式
 	private ALittle.TextRadioButton _tool_tile_erase;				// 笔擦模式
+	private ALittle.TextRadioButton _tool_tile_select;				// 选择模式
 
 	private IDEUIControlTree _control_tree;	// 控件树
     private IDEUITileBrushEdit _tile_brush_edit; // 笔刷编辑区
 
     private IDEUITileBrushList _tile_brush_list;		// 地图笔刷
 	private IDEUIControlList _control_list;	// 控件库
-	private IDEUICodeList    _code_list;	// 代码库
+	private IDEUICodeList _code_list;	// 代码库
     private IDEUITileList _tile_list;	// 地图列表
 	private IDEUIProjectList _project_list;	// 项目库
 	private IDEUIControlAnti _control_anti;	// 动画编辑器
-	private IDEContentEdit	 _content_edit;	// 内容编辑管理器
+	private IDEContentEdit _content_edit;	// 内容编辑管理器
 
 	public fun TCtor()
 	{		
@@ -121,7 +126,7 @@ protected class IDEUICenter : ALittle.DisplayLayout
 		this._quick_fold_updown.selected = false;
 		ALittle.TextRadioButton.SetGroup([this._tool_singleselect, this._tool_handdrag, this._tool_scale, this._tool_presee]);
 
-        ALittle.TextRadioButton.SetGroup([this._tool_tile_brush, this._tool_tile_handdrag, this._tool_tile_erase]);
+        ALittle.TextRadioButton.SetGroup([this._tool_tile_brush, this._tool_tile_handdrag, this._tool_tile_erase, this._tool_tile_select]);
 
         g_IDEProject.AddEventListener(this, this.HandleProjectOpen);
 	}
@@ -267,6 +272,13 @@ protected class IDEUICenter : ALittle.DisplayLayout
 		tab_child.save = true;
 	}
 	////////////////////////////////////////////////////////////////////////////////////////
+    // 隐藏所有工具栏
+    public fun HideAllToolContainer()
+    {
+        this._tool_ui_container.visible = false;
+        this._tool_code_container.visible = false;
+        this._tool_tile_container.visible = false;
+    }
 	// 工具栏按钮发生变化
 	public fun HandleToolSingleSelect(ALittle.UIEvent event)
 	{
@@ -418,10 +430,8 @@ protected class IDEUICenter : ALittle.DisplayLayout
 
     public fun HandleToolTileBrushSelect(ALittle.UIEvent event)
 	{
-		var object = event.target;
-
 		var op_event = new IDEUICenterTileBrushOpChangedEvent();
-		op_event.value = object.selected;
+		op_event.value = event.target.selected;
 		g_IDECenter.center.DispatchEvent(op_event);
 	}
 	public fun HandleToolTileHandDrag(ALittle.UIEvent event)
@@ -436,6 +446,12 @@ protected class IDEUICenter : ALittle.DisplayLayout
 		op_event.value = event.target.selected;
 		g_IDECenter.center.DispatchEvent(op_event);
 	}
+    public fun HandleToolTileSelect(ALittle.UIEvent event)
+    {
+		var op_event = new IDEUICenterTileSelectOpChangedEvent();
+		op_event.value = event.target.selected;
+		g_IDECenter.center.DispatchEvent(op_event);
+    }
 
 	public get tile_brush() : bool
 	{
@@ -452,6 +468,11 @@ protected class IDEUICenter : ALittle.DisplayLayout
         return this._tool_tile_erase.selected;
     }
 
+    public get tile_select() : bool
+    {
+        return this._tool_tile_select.selected;
+    }
+
     private fun HandleFindFileClick(ALittle.UIClickEvent event)
     {
         g_IDEProjectFindFileDialog.ShowFindFile();
@@ -459,9 +480,8 @@ protected class IDEUICenter : ALittle.DisplayLayout
 
     private fun HandleProjectOpen(IDEProjectOpenEvent event)
     {
-        this._tool_ui_container.visible = false;
-        this._tool_code_container.visible = false;
-        this._tool_tile_container.visible = false;
+        this.HideAllToolContainer();
+        this._tool_code_container.visible = true;
         this._tool_language.text = g_IDEProject.project.config.GetConfig("target_language", "Lua");
     }
 }

@@ -165,6 +165,15 @@ function ALittleIDE.IDEUITileLayerEdit:GetCurLayerInfo()
 	return nil, nil
 end
 
+function ALittleIDE.IDEUITileLayerEdit:GetLayerInfoIndex(info)
+	for index, child in ___ipairs(self._layer_list.childs) do
+		if child._user_data == info then
+			return index
+		end
+	end
+	return nil
+end
+
 function ALittleIDE.IDEUITileLayerEdit:HandleAddLayerClick(event)
 	local x, y = event.target:LocalToGlobal()
 	local name = g_AUITool:ShowRename("", x, y + event.target.height, 200)

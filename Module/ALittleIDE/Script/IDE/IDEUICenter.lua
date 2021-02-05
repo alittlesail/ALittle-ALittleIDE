@@ -68,6 +68,12 @@ name_list = {"target","value"},
 type_list = {"ALittle.DisplayObject","bool"},
 option_map = {}
 })
+ALittle.RegStruct(-459597925, "ALittleIDE.IDEUICenterTileSelectOpChangedEvent", {
+name = "ALittleIDE.IDEUICenterTileSelectOpChangedEvent", ns_name = "ALittleIDE", rl_name = "IDEUICenterTileSelectOpChangedEvent", hash_code = -459597925,
+name_list = {"target","value"},
+type_list = {"ALittle.DisplayObject","bool"},
+option_map = {}
+})
 
 assert(ALittle.DisplayLayout, " extends class:ALittle.DisplayLayout is nil")
 ALittleIDE.IDEUICenter = Lua.Class(ALittle.DisplayLayout, "ALittleIDE.IDEUICenter")
@@ -86,7 +92,7 @@ function ALittleIDE.IDEUICenter:TCtor()
 	self._quick_edit_grid3.down_size = self._project_quick_tab.up_size
 	self._quick_fold_updown.selected = false
 	ALittle.TextRadioButton.SetGroup({self._tool_singleselect, self._tool_handdrag, self._tool_scale, self._tool_presee})
-	ALittle.TextRadioButton.SetGroup({self._tool_tile_brush, self._tool_tile_handdrag, self._tool_tile_erase})
+	ALittle.TextRadioButton.SetGroup({self._tool_tile_brush, self._tool_tile_handdrag, self._tool_tile_erase, self._tool_tile_select})
 	ALittleIDE.g_IDEProject:AddEventListener(___all_struct[-975432877], self, self.HandleProjectOpen)
 end
 
@@ -275,6 +281,12 @@ function ALittleIDE.IDEUICenter:HandleSaveCurrent(event)
 	tab_child.save = true
 end
 
+function ALittleIDE.IDEUICenter:HideAllToolContainer()
+	self._tool_ui_container.visible = false
+	self._tool_code_container.visible = false
+	self._tool_tile_container.visible = false
+end
+
 function ALittleIDE.IDEUICenter:HandleToolSingleSelect(event)
 	local object = event.target
 	local op_event = {}
@@ -433,9 +445,8 @@ function ALittleIDE.IDEUICenter:HandleJumpPreCodeClick(event)
 end
 
 function ALittleIDE.IDEUICenter:HandleToolTileBrushSelect(event)
-	local object = event.target
 	local op_event = {}
-	op_event.value = object.selected
+	op_event.value = event.target.selected
 	ALittleIDE.g_IDECenter.center:DispatchEvent(___all_struct[-1173423947], op_event)
 end
 
@@ -451,6 +462,12 @@ function ALittleIDE.IDEUICenter:HandleToolTileErase(event)
 	ALittleIDE.g_IDECenter.center:DispatchEvent(___all_struct[-1614198151], op_event)
 end
 
+function ALittleIDE.IDEUICenter:HandleToolTileSelect(event)
+	local op_event = {}
+	op_event.value = event.target.selected
+	ALittleIDE.g_IDECenter.center:DispatchEvent(___all_struct[-459597925], op_event)
+end
+
 function ALittleIDE.IDEUICenter.__getter:tile_brush()
 	return self._tool_tile_brush.selected
 end
@@ -463,14 +480,17 @@ function ALittleIDE.IDEUICenter.__getter:tile_erase()
 	return self._tool_tile_erase.selected
 end
 
+function ALittleIDE.IDEUICenter.__getter:tile_select()
+	return self._tool_tile_select.selected
+end
+
 function ALittleIDE.IDEUICenter:HandleFindFileClick(event)
 	ALittleIDE.g_IDEProjectFindFileDialog:ShowFindFile()
 end
 
 function ALittleIDE.IDEUICenter:HandleProjectOpen(event)
-	self._tool_ui_container.visible = false
-	self._tool_code_container.visible = false
-	self._tool_tile_container.visible = false
+	self:HideAllToolContainer()
+	self._tool_code_container.visible = true
 	self._tool_language.text = ALittleIDE.g_IDEProject.project.config:GetConfig("target_language", "Lua")
 end
 

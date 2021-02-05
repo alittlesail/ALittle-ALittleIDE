@@ -127,6 +127,16 @@ protected class IDEUITileLayerEdit : ALittle.DisplayLayout
         return null, null;
     }
 
+    public fun GetLayerInfoIndex(IDEUITileLayerInfo info) : int
+    {
+        for (var index, child in this._layer_list.childs)
+        {
+            if (cast<IDEUITileLayerInfo>(child._user_data) == info)
+            	return index;
+        }
+        return null;
+    }
+
     private async fun HandleAddLayerClick(ALittle.UIClickEvent event)
     {
         var x, y = event.target.LocalToGlobal();
