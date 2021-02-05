@@ -31,6 +31,7 @@ public class IDEImageSelectDialog : AUIPlugin.AUIFileSelectDialog
 		menu.AddItem("复制九宫格代码", bind(this.HandleImageCopyGrid9ImageCodeClick, this, event));
 		menu.AddItem("复制图片代码", bind(this.HandleImageCopyImageCodeClick, this, event));
 		menu.AddItem("图片裁剪", bind(this.HandleImageEditClick, this, event));
+		menu.AddItem("图片网格切割", bind(this.HandleImageGridCutClick, this, event));
 		menu.AddItem("删除", bind(this.HandleImageDeleteClick, this, event));
 		menu.Show();
 	}
@@ -83,6 +84,11 @@ public class IDEImageSelectDialog : AUIPlugin.AUIFileSelectDialog
 	{
 		g_IDEEditImageDialog.ShowDialog(this.base_path.."/"..event.path, this.base_path);
 	}
+
+	private fun HandleImageGridCutClick(AUIPlugin.AUIFileSelectRightButtonDownEvent event)
+	{
+		g_IDEGridCutImageDialog.ShowDialog(this.base_path.."/"..event.path);
+	}
 	
 	private async fun HandleImageDeleteClick(AUIPlugin.AUIFileSelectRightButtonDownEvent event)
 	{
@@ -104,3 +110,4 @@ public class IDEImageSelectDialog : AUIPlugin.AUIFileSelectDialog
 protected var g_IDEImageManagerDialog = new IDEImageSelectDialog("图片选择器", null, ["PNG", "JPG"]);
 protected var g_IDEImageSelectDialog = new IDEImageSelectDialog("图片选择器", g_DialogLayer, ["PNG", "JPG"]);
 protected var g_IDEEditImageDialog = new AUIPlugin.AUIEditImageDialog();
+protected var g_IDEGridCutImageDialog = new AUIPlugin.AUIGridCutImageDialog();

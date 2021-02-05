@@ -48,6 +48,7 @@ function ALittleIDE.IDEImageSelectDialog:HandleImageSelectRButtonDown(event)
 	menu:AddItem("复制九宫格代码", Lua.Bind(self.HandleImageCopyGrid9ImageCodeClick, self, event))
 	menu:AddItem("复制图片代码", Lua.Bind(self.HandleImageCopyImageCodeClick, self, event))
 	menu:AddItem("图片裁剪", Lua.Bind(self.HandleImageEditClick, self, event))
+	menu:AddItem("图片网格切割", Lua.Bind(self.HandleImageGridCutClick, self, event))
 	menu:AddItem("删除", Lua.Bind(self.HandleImageDeleteClick, self, event))
 	menu:Show()
 end
@@ -94,6 +95,10 @@ function ALittleIDE.IDEImageSelectDialog:HandleImageEditClick(event)
 	ALittleIDE.g_IDEEditImageDialog:ShowDialog(self.base_path .. "/" .. event.path, self.base_path)
 end
 
+function ALittleIDE.IDEImageSelectDialog:HandleImageGridCutClick(event)
+	ALittleIDE.g_IDEGridCutImageDialog:ShowDialog(self.base_path .. "/" .. event.path)
+end
+
 function ALittleIDE.IDEImageSelectDialog:HandleImageDeleteClick(event)
 	local tittle = "确定要永久删除该文件吗？"
 	if event.directory then
@@ -114,4 +119,5 @@ ALittleIDE.IDEImageSelectDialog.HandleImageDeleteClick = Lua.CoWrap(ALittleIDE.I
 ALittleIDE.g_IDEImageManagerDialog = ALittleIDE.IDEImageSelectDialog("图片选择器", nil, {"PNG", "JPG"})
 ALittleIDE.g_IDEImageSelectDialog = ALittleIDE.IDEImageSelectDialog("图片选择器", ALittleIDE.g_DialogLayer, {"PNG", "JPG"})
 ALittleIDE.g_IDEEditImageDialog = AUIPlugin.AUIEditImageDialog()
+ALittleIDE.g_IDEGridCutImageDialog = AUIPlugin.AUIGridCutImageDialog()
 end
