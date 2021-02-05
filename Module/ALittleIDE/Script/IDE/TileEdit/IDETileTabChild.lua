@@ -248,7 +248,6 @@ function ALittleIDE.IDETileTabChild:HandleSelectPaste(rel_x, rel_y)
 	end
 	local row_count, col_count = self:GetRowColCount()
 	local begin_row, begin_col = ALittle.Tile_CalcRowColByPos(self._user_info.tile_map, rel_x, rel_y)
-	ALittle.Log(row_count, col_count, begin_row, begin_col)
 	if begin_row > row_count or begin_col > col_count then
 		return
 	end

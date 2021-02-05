@@ -255,18 +255,21 @@ public class IDETileSelectCutRevoke : ALittle.RevokeObject
                             if (old_cell != null)
                             {
                                 var old_tex_path = this._clipboard.tex_map[old_cell.tex_id];
-                                var tex_id = this._layer_info._user_info.tex_id_map[old_tex_path];
-                                if (tex_id == null)
+                                if (old_tex_path != null)
                                 {
-                                    tex_id = this._layer_info._user_info.tex_id_max + 1;
-                                    this._layer_info._user_info.tex_id_max = tex_id;
-                                    this._layer_info._user_info.tile_map.tex_map[tex_id] = old_tex_path;
-                                    this._layer_info._user_info.tex_id_map[old_tex_path] = tex_id;
-                                }
-                                cell.tex_id = tex_id;
+                                    var tex_id = this._layer_info._user_info.tex_id_map[old_tex_path];
+                                    if (tex_id == null)
+                                    {
+                                        tex_id = this._layer_info._user_info.tex_id_max + 1;
+                                        this._layer_info._user_info.tex_id_max = tex_id;
+                                        this._layer_info._user_info.tile_map.tex_map[tex_id] = old_tex_path;
+                                        this._layer_info._user_info.tex_id_map[old_tex_path] = tex_id;
+                                    }
+                                    cell.tex_id = tex_id;
                                 
-                                var image = this._tab_child.GetImage(index, row, col);
-                                if (image != null) image.SetTextureCut("Module/"..g_IDEProject.project.name.."/Texture/"..old_tex_path, 0, 0, true);
+                                    var image = this._tab_child.GetImage(index, row, col);
+                                    if (image != null) image.SetTextureCut("Module/"..g_IDEProject.project.name.."/Texture/"..old_tex_path, 0, 0, true);
+                                }
                             }
                         }
                     }
@@ -336,33 +339,35 @@ public class IDETileSelectPasteRevoke : ALittle.RevokeObject
                     var paste_old_cell = paste_row_cell[col - this._begin_col + 1];
                     if (paste_old_cell != null)
                     {
-                        var row_cell = this._layer_info._layer.cell_map[row];
-                        if (row_cell == null)
-                        {
-                            row_cell = new Map<int, ALittle.TileCell>();
-                            this._layer_info._layer.cell_map[row] = row_cell;
-                        }
-                        var cell = row_cell[col];
-                        if (cell == null)
-                        {
-                            cell = new ALittle.TileCell();
-                            row_cell[col] = cell;
-                        }
-
                         var old_tex_path = paste_clipboard.tex_map[paste_old_cell.tex_id];
-
-                        var tex_id = this._layer_info._user_info.tex_id_map[old_tex_path];
-                        if (tex_id == null)
+                        if (old_tex_path != null)
                         {
-                            tex_id = this._layer_info._user_info.tex_id_max + 1;
-                            this._layer_info._user_info.tex_id_max = tex_id;
-                            this._layer_info._user_info.tile_map.tex_map[tex_id] = old_tex_path;
-                            this._layer_info._user_info.tex_id_map[old_tex_path] = tex_id;
+                            var row_cell = this._layer_info._layer.cell_map[row];
+                            if (row_cell == null)
+                            {
+                                row_cell = new Map<int, ALittle.TileCell>();
+                                this._layer_info._layer.cell_map[row] = row_cell;
+                            }
+                            var cell = row_cell[col];
+                            if (cell == null)
+                            {
+                                cell = new ALittle.TileCell();
+                                row_cell[col] = cell;
+                            }
+
+                            var tex_id = this._layer_info._user_info.tex_id_map[old_tex_path];
+                            if (tex_id == null)
+                            {
+                                tex_id = this._layer_info._user_info.tex_id_max + 1;
+                                this._layer_info._user_info.tex_id_max = tex_id;
+                                this._layer_info._user_info.tile_map.tex_map[tex_id] = old_tex_path;
+                                this._layer_info._user_info.tex_id_map[old_tex_path] = tex_id;
+                            }
+                            cell.tex_id = tex_id;
+                        
+                            var image = this._tab_child.GetImage(index, row, col);
+                            if (image != null) image.SetTextureCut("Module/"..g_IDEProject.project.name.."/Texture/"..old_tex_path, 0, 0, true);
                         }
-                        cell.tex_id = tex_id;
-                    
-                        var image = this._tab_child.GetImage(index, row, col);
-                        if (image != null) image.SetTextureCut("Module/"..g_IDEProject.project.name.."/Texture/"..old_tex_path, 0, 0, true);
                     }
                 }
             }

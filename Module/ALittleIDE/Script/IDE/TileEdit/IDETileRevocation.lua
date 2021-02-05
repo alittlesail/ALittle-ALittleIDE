@@ -201,17 +201,19 @@ function ALittleIDE.IDETileSelectCutRevoke:Back()
 						local old_cell = old_row_cell[col - self._begin_col + 1]
 						if old_cell ~= nil then
 							local old_tex_path = self._clipboard.tex_map[old_cell.tex_id]
-							local tex_id = self._layer_info._user_info.tex_id_map[old_tex_path]
-							if tex_id == nil then
-								tex_id = self._layer_info._user_info.tex_id_max + 1
-								self._layer_info._user_info.tex_id_max = tex_id
-								self._layer_info._user_info.tile_map.tex_map[tex_id] = old_tex_path
-								self._layer_info._user_info.tex_id_map[old_tex_path] = tex_id
-							end
-							cell.tex_id = tex_id
-							local image = self._tab_child:GetImage(index, row, col)
-							if image ~= nil then
-								image:SetTextureCut("Module/" .. ALittleIDE.g_IDEProject.project.name .. "/Texture/" .. old_tex_path, 0, 0, true)
+							if old_tex_path ~= nil then
+								local tex_id = self._layer_info._user_info.tex_id_map[old_tex_path]
+								if tex_id == nil then
+									tex_id = self._layer_info._user_info.tex_id_max + 1
+									self._layer_info._user_info.tex_id_max = tex_id
+									self._layer_info._user_info.tile_map.tex_map[tex_id] = old_tex_path
+									self._layer_info._user_info.tex_id_map[old_tex_path] = tex_id
+								end
+								cell.tex_id = tex_id
+								local image = self._tab_child:GetImage(index, row, col)
+								if image ~= nil then
+									image:SetTextureCut("Module/" .. ALittleIDE.g_IDEProject.project.name .. "/Texture/" .. old_tex_path, 0, 0, true)
+								end
 							end
 						end
 					end
@@ -273,28 +275,30 @@ function ALittleIDE.IDETileSelectPasteRevoke:PasteImpl(paste_clipboard)
 				if not(col <= self._end_col) then break end
 				local paste_old_cell = paste_row_cell[col - self._begin_col + 1]
 				if paste_old_cell ~= nil then
-					local row_cell = self._layer_info._layer.cell_map[row]
-					if row_cell == nil then
-						row_cell = {}
-						self._layer_info._layer.cell_map[row] = row_cell
-					end
-					local cell = row_cell[col]
-					if cell == nil then
-						cell = {}
-						row_cell[col] = cell
-					end
 					local old_tex_path = paste_clipboard.tex_map[paste_old_cell.tex_id]
-					local tex_id = self._layer_info._user_info.tex_id_map[old_tex_path]
-					if tex_id == nil then
-						tex_id = self._layer_info._user_info.tex_id_max + 1
-						self._layer_info._user_info.tex_id_max = tex_id
-						self._layer_info._user_info.tile_map.tex_map[tex_id] = old_tex_path
-						self._layer_info._user_info.tex_id_map[old_tex_path] = tex_id
-					end
-					cell.tex_id = tex_id
-					local image = self._tab_child:GetImage(index, row, col)
-					if image ~= nil then
-						image:SetTextureCut("Module/" .. ALittleIDE.g_IDEProject.project.name .. "/Texture/" .. old_tex_path, 0, 0, true)
+					if old_tex_path ~= nil then
+						local row_cell = self._layer_info._layer.cell_map[row]
+						if row_cell == nil then
+							row_cell = {}
+							self._layer_info._layer.cell_map[row] = row_cell
+						end
+						local cell = row_cell[col]
+						if cell == nil then
+							cell = {}
+							row_cell[col] = cell
+						end
+						local tex_id = self._layer_info._user_info.tex_id_map[old_tex_path]
+						if tex_id == nil then
+							tex_id = self._layer_info._user_info.tex_id_max + 1
+							self._layer_info._user_info.tex_id_max = tex_id
+							self._layer_info._user_info.tile_map.tex_map[tex_id] = old_tex_path
+							self._layer_info._user_info.tex_id_map[old_tex_path] = tex_id
+						end
+						cell.tex_id = tex_id
+						local image = self._tab_child:GetImage(index, row, col)
+						if image ~= nil then
+							image:SetTextureCut("Module/" .. ALittleIDE.g_IDEProject.project.name .. "/Texture/" .. old_tex_path, 0, 0, true)
+						end
 					end
 				end
 				col = col+(1)

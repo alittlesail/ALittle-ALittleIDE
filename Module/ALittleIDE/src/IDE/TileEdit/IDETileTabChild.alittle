@@ -237,7 +237,6 @@ public class IDETileTabChild : IDETabChild
         var begin_row, begin_col = ALittle.Tile_CalcRowColByPos(this._user_info.tile_map
                                                                , rel_x
                                                                , rel_y);
-        ALittle.Log(row_count, col_count, begin_row, begin_col);
         if (begin_row > row_count || begin_col > col_count) return;
 
         var end_row = begin_row + s_tile_clipboard.row_count - 1;
