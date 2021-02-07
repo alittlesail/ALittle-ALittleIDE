@@ -273,9 +273,9 @@ function ALittleIDE.IDETileSelectPasteRevoke:PasteImpl(paste_clipboard)
 			local col = self._begin_col
 			while true do
 				if not(col <= self._end_col) then break end
-				local paste_old_cell = paste_row_cell[col - self._begin_col + 1]
-				if paste_old_cell ~= nil then
-					local old_tex_path = paste_clipboard.tex_map[paste_old_cell.tex_id]
+				local paste_cell = paste_row_cell[col - self._begin_col + 1]
+				if paste_cell ~= nil then
+					local old_tex_path = paste_clipboard.tex_map[paste_cell.tex_id]
 					if old_tex_path ~= nil then
 						local row_cell = self._layer_info._layer.cell_map[row]
 						if row_cell == nil then

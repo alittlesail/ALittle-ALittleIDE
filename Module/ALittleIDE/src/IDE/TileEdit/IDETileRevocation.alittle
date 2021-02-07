@@ -336,10 +336,10 @@ public class IDETileSelectPasteRevoke : ALittle.RevokeObject
             {
                 for (var col = this._begin_col; col <= this._end_col; 1)
                 {
-                    var paste_old_cell = paste_row_cell[col - this._begin_col + 1];
-                    if (paste_old_cell != null)
+                    var paste_cell = paste_row_cell[col - this._begin_col + 1];
+                    if (paste_cell != null)
                     {
-                        var old_tex_path = paste_clipboard.tex_map[paste_old_cell.tex_id];
+                        var old_tex_path = paste_clipboard.tex_map[paste_cell.tex_id];
                         if (old_tex_path != null)
                         {
                             var row_cell = this._layer_info._layer.cell_map[row];

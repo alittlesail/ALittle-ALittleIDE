@@ -563,8 +563,7 @@ function ALittleIDE.IDETileTabChild:CreateLayer()
 	linear_2.y = ALittle.Tile_CalcLinear2OffsetY(self._user_info.tile_map)
 	group:AddChild(linear_2)
 	self._group_tile:AddChild(group)
-	local row_count = self._linear_grid_1.child_count
-	local col_count = self._linear_grid_1.childs[1].child_count
+	local row_count, col_count = self:GetRowColCount()
 	self:ResizeLinear(linear_1, linear_2, row_count, col_count, self._group_tile.child_count)
 	return group, linear_1, linear_2
 end

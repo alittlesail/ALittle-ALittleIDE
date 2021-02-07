@@ -579,8 +579,7 @@ public class IDETileTabChild : IDETabChild
 
         this._group_tile.AddChild(group);
 
-        var row_count = this._linear_grid_1.child_count;
-        var col_count = this._linear_grid_1.childs[1].child_count;
+        var row_count, col_count = this.GetRowColCount();
         this.ResizeLinear(linear_1, linear_2, row_count, col_count, this._group_tile.child_count);
         return group, linear_1, linear_2;
     }
