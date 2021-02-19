@@ -10,7 +10,6 @@ ALittleIDE.ImageS = JavaScript.Class(ALittleIDE.DisplayObjectS, {
 	LoadNatureBase : function() {
 		ALittleIDE.DisplayObjectS.LoadNatureBase.call(this);
 		this.LoadDefaultNilString("texture_name");
-		this.LoadEnumData("flip", ALittleIDE.g_IDEEnum.flip_type);
 	},
 	HandleImageTextureNameFOCUSOUT : function(event) {
 		this.DefaultNilStringInputChange("texture_name", false);
@@ -33,10 +32,6 @@ ALittleIDE.ImageS = JavaScript.Class(ALittleIDE.DisplayObjectS, {
 			return;
 		}
 		this.ImagePathSelectCallback("texture_name", this.HandleImageTextureNameFOCUSOUT, revoke_bind, texture_name, true);
-	},
-	HandleFlipSELECT_CHANGE : function(event) {
-		let list = ALittleIDE.g_IDEEnum.flip_rtype;
-		this.TypeSelectChange("flip", list, false);
 	},
 }, "ALittleIDE.ImageS");
 

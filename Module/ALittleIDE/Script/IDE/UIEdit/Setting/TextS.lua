@@ -25,7 +25,6 @@ function ALittleIDE.TextS:LoadNatureBase()
 	self:LoadValueData("text")
 	self:LoadDefaultNilString("font_path")
 	self:LoadDefaultNilString("font_size")
-	self:LoadEnumData("flip", ALittleIDE.g_IDEEnum.flip_type)
 end
 
 function ALittleIDE.TextS:HandleBoldSELECT_CHANGE(event)
@@ -67,11 +66,6 @@ function ALittleIDE.TextS:HandleFontSizeFOCUSOUT(event)
 	else
 		self:ValueNumZInputChange("font_size", false)
 	end
-end
-
-function ALittleIDE.TextS:HandleFlipSELECT_CHANGE(event)
-	local list = ALittleIDE.g_IDEEnum.flip_rtype
-	self:TypeSelectChange("flip", list, false)
 end
 
 end

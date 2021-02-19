@@ -68,16 +68,6 @@ ALittleIDE.IDEEnum = JavaScript.Class(undefined, {
 		this.aje_rtype = {};
 		this.aje_rtype["拒绝默认事件"] = false;
 		this.aje_rtype["接受默认事件"] = true;
-		this.flip_type = new Map();
-		this.flip_type.set(0, "无");
-		this.flip_type.set(1, "水平");
-		this.flip_type.set(2, "垂直");
-		this.flip_type.set(3, "水平+垂直");
-		this.flip_rtype = {};
-		this.flip_rtype["无"] = 0;
-		this.flip_rtype["水平"] = 1;
-		this.flip_rtype["垂直"] = 2;
-		this.flip_rtype["水平+垂直"] = 3;
 		this.select_type = new Map();
 		this.select_type.set(0, "无");
 		this.select_type.set(1, "选择文件");

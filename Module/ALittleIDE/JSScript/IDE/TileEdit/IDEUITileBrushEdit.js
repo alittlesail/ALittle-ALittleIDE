@@ -156,6 +156,17 @@ ALittleIDE.IDEUITileLayerEdit = JavaScript.Class(ALittle.DisplayLayout, {
 		}
 		return [undefined, undefined];
 	},
+	GetLayerInfoIndex : function(info) {
+		let ___OBJECT_4 = this._layer_list.childs;
+		for (let index = 1; index <= ___OBJECT_4.length; ++index) {
+			let child = ___OBJECT_4[index - 1];
+			if (child === undefined) break;
+			if (child._user_data === info) {
+				return index;
+			}
+		}
+		return undefined;
+	},
 	HandleAddLayerClick : async function(event) {
 		let [x, y] = event.target.LocalToGlobal();
 		let name = await g_AUITool.ShowRename("", x, y + event.target.height, 200);

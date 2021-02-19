@@ -39,6 +39,7 @@ ALittleIDE.IDEImageSelectDialog = JavaScript.Class(AUIPlugin.AUIFileSelectDialog
 		menu.AddItem("复制九宫格代码", this.HandleImageCopyGrid9ImageCodeClick.bind(this, event));
 		menu.AddItem("复制图片代码", this.HandleImageCopyImageCodeClick.bind(this, event));
 		menu.AddItem("图片裁剪", this.HandleImageEditClick.bind(this, event));
+		menu.AddItem("图片网格切割", this.HandleImageGridCutClick.bind(this, event));
 		menu.AddItem("删除", this.HandleImageDeleteClick.bind(this, event));
 		menu.Show();
 	},
@@ -81,6 +82,9 @@ ALittleIDE.IDEImageSelectDialog = JavaScript.Class(AUIPlugin.AUIFileSelectDialog
 	HandleImageEditClick : function(event) {
 		ALittleIDE.g_IDEEditImageDialog.ShowDialog(this.base_path + "/" + event.path, this.base_path);
 	},
+	HandleImageGridCutClick : function(event) {
+		ALittleIDE.g_IDEGridCutImageDialog.ShowDialog(this.base_path + "/" + event.path);
+	},
 	HandleImageDeleteClick : async function(event) {
 		let tittle = "确定要永久删除该文件吗？";
 		if (event.directory) {
@@ -101,4 +105,5 @@ ALittleIDE.IDEImageSelectDialog = JavaScript.Class(AUIPlugin.AUIFileSelectDialog
 ALittleIDE.g_IDEImageManagerDialog = ALittle.NewObject(ALittleIDE.IDEImageSelectDialog, "图片选择器", undefined, ["PNG", "JPG"]);
 ALittleIDE.g_IDEImageSelectDialog = ALittle.NewObject(ALittleIDE.IDEImageSelectDialog, "图片选择器", ALittleIDE.g_DialogLayer, ["PNG", "JPG"]);
 ALittleIDE.g_IDEEditImageDialog = ALittle.NewObject(AUIPlugin.AUIEditImageDialog);
+ALittleIDE.g_IDEGridCutImageDialog = ALittle.NewObject(AUIPlugin.AUIGridCutImageDialog);
 }

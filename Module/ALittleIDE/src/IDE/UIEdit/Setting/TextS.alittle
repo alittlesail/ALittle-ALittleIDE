@@ -4,7 +4,6 @@ namespace ALittleIDE;
 public class TextS : DisplayObjectS
 {
 	private ALittle.DisplayObject _text;
-	private ALittle.DisplayObject _flip;
 
 	public ctor(IDEUITreeUserInfo user_info, IDEUITabChild tab_child, IDEUITreeLogic tree_logic)
 	{
@@ -22,7 +21,6 @@ public class TextS : DisplayObjectS
 		this.LoadValueData("text");
 		this.LoadDefaultNilString("font_path");
 		this.LoadDefaultNilString("font_size");
-		this.LoadEnumData("flip", cast<Map<string, any>>(g_IDEEnum.flip_type));
 	}
 	//bold
 	public fun HandleBoldSELECT_CHANGE(ALittle.UIEvent event)
@@ -68,11 +66,5 @@ public class TextS : DisplayObjectS
 			this.ValueNumZInputChange("font_size", true);
 		else
 			this.ValueNumZInputChange("font_size", false);
-	}
-	
-	public fun HandleFlipSELECT_CHANGE(ALittle.UIEvent event)
-	{
-		var list = g_IDEEnum.flip_rtype;
-		this.TypeSelectChange("flip", cast<Map<string,any>>(list), false);
 	}
 }

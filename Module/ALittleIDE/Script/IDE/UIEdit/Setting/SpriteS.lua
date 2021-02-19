@@ -23,7 +23,6 @@ function ALittleIDE.SpriteS:LoadNatureBase()
 	self:LoadValueData("col_count")
 	self:LoadValueData("row_index")
 	self:LoadValueData("col_index")
-	self:LoadEnumData("flip", ALittleIDE.g_IDEEnum.flip_type)
 end
 
 function ALittleIDE.SpriteS:HandleImageTextureNameFOCUSOUT(event)
@@ -59,11 +58,6 @@ end
 
 function ALittleIDE.SpriteS:HandleColIndexFOCUSOUT(event)
 	self:ValueNumInputChange("col_index", false)
-end
-
-function ALittleIDE.SpriteS:HandleFlipSELECT_CHANGE(event)
-	local list = ALittleIDE.g_IDEEnum.flip_rtype
-	self:TypeSelectChange("flip", list, false)
 end
 
 end

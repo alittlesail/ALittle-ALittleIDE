@@ -62,6 +62,12 @@ name_list : ["target","value"],
 type_list : ["ALittle.DisplayObject","bool"],
 option_map : {}
 })
+ALittle.RegStruct(-459597925, "ALittleIDE.IDEUICenterTileSelectOpChangedEvent", {
+name : "ALittleIDE.IDEUICenterTileSelectOpChangedEvent", ns_name : "ALittleIDE", rl_name : "IDEUICenterTileSelectOpChangedEvent", hash_code : -459597925,
+name_list : ["target","value"],
+type_list : ["ALittle.DisplayObject","bool"],
+option_map : {}
+})
 
 if (ALittle.DisplayLayout === undefined) throw new Error(" extends class:ALittle.DisplayLayout is undefined");
 ALittleIDE.IDEUICenter = JavaScript.Class(ALittle.DisplayLayout, {
@@ -79,7 +85,7 @@ ALittleIDE.IDEUICenter = JavaScript.Class(ALittle.DisplayLayout, {
 		this._quick_edit_grid3.down_size = this._project_quick_tab.up_size;
 		this._quick_fold_updown.selected = false;
 		ALittle.TextRadioButton.SetGroup([this._tool_singleselect, this._tool_handdrag, this._tool_scale, this._tool_presee]);
-		ALittle.TextRadioButton.SetGroup([this._tool_tile_brush, this._tool_tile_handdrag, this._tool_tile_erase]);
+		ALittle.TextRadioButton.SetGroup([this._tool_tile_brush, this._tool_tile_handdrag, this._tool_tile_erase, this._tool_tile_select]);
 		ALittleIDE.g_IDEProject.AddEventListener(___all_struct.get(-975432877), this, this.HandleProjectOpen);
 	},
 	get project_edit_tab() {
@@ -241,6 +247,11 @@ ALittleIDE.IDEUICenter = JavaScript.Class(ALittle.DisplayLayout, {
 		}
 		tab_child.save = true;
 	},
+	HideAllToolContainer : function() {
+		this._tool_ui_container.visible = false;
+		this._tool_code_container.visible = false;
+		this._tool_tile_container.visible = false;
+	},
 	HandleToolSingleSelect : function(event) {
 		let object = event.target;
 		let op_event = {};
@@ -382,9 +393,8 @@ ALittleIDE.IDEUICenter = JavaScript.Class(ALittle.DisplayLayout, {
 		ALittleIDE.g_IDECenter.center.code_list.OpenByFullPath(info.file_path, info.it_line, info.it_char, undefined, undefined);
 	},
 	HandleToolTileBrushSelect : function(event) {
-		let object = event.target;
 		let op_event = {};
-		op_event.value = object.selected;
+		op_event.value = event.target.selected;
 		ALittleIDE.g_IDECenter.center.DispatchEvent(___all_struct.get(-1173423947), op_event);
 	},
 	HandleToolTileHandDrag : function(event) {
@@ -397,6 +407,11 @@ ALittleIDE.IDEUICenter = JavaScript.Class(ALittle.DisplayLayout, {
 		op_event.value = event.target.selected;
 		ALittleIDE.g_IDECenter.center.DispatchEvent(___all_struct.get(-1614198151), op_event);
 	},
+	HandleToolTileSelect : function(event) {
+		let op_event = {};
+		op_event.value = event.target.selected;
+		ALittleIDE.g_IDECenter.center.DispatchEvent(___all_struct.get(-459597925), op_event);
+	},
 	get tile_brush() {
 		return this._tool_tile_brush.selected;
 	},
@@ -406,13 +421,15 @@ ALittleIDE.IDEUICenter = JavaScript.Class(ALittle.DisplayLayout, {
 	get tile_erase() {
 		return this._tool_tile_erase.selected;
 	},
+	get tile_select() {
+		return this._tool_tile_select.selected;
+	},
 	HandleFindFileClick : function(event) {
 		ALittleIDE.g_IDEProjectFindFileDialog.ShowFindFile();
 	},
 	HandleProjectOpen : function(event) {
-		this._tool_ui_container.visible = false;
-		this._tool_code_container.visible = false;
-		this._tool_tile_container.visible = false;
+		this.HideAllToolContainer();
+		this._tool_code_container.visible = true;
 		this._tool_language.text = ALittleIDE.g_IDEProject.project.config.GetConfig("target_language", "Lua");
 	},
 }, "ALittleIDE.IDEUICenter");

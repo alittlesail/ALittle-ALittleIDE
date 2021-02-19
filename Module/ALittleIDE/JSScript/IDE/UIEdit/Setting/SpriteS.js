@@ -14,7 +14,6 @@ ALittleIDE.SpriteS = JavaScript.Class(ALittleIDE.DisplayObjectS, {
 		this.LoadValueData("col_count");
 		this.LoadValueData("row_index");
 		this.LoadValueData("col_index");
-		this.LoadEnumData("flip", ALittleIDE.g_IDEEnum.flip_type);
 	},
 	HandleImageTextureNameFOCUSOUT : function(event) {
 		this.DefaultNilStringInputChange("texture_name", false);
@@ -43,10 +42,6 @@ ALittleIDE.SpriteS = JavaScript.Class(ALittleIDE.DisplayObjectS, {
 	},
 	HandleColIndexFOCUSOUT : function(event) {
 		this.ValueNumInputChange("col_index", false);
-	},
-	HandleFlipSELECT_CHANGE : function(event) {
-		let list = ALittleIDE.g_IDEEnum.flip_rtype;
-		this.TypeSelectChange("flip", list, false);
 	},
 }, "ALittleIDE.SpriteS");
 

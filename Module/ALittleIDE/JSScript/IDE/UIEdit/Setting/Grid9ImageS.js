@@ -10,7 +10,6 @@ ALittleIDE.Grid9ImageS = JavaScript.Class(ALittleIDE.Grid9S, {
 	LoadNatureBase : function() {
 		ALittleIDE.Grid9S.LoadNatureBase.call(this);
 		this.LoadDefaultNilString("texture_name");
-		this.LoadEnumData("flip", ALittleIDE.g_IDEEnum.flip_type);
 	},
 	HandleImageTextureNameFOCUSOUT : function(event) {
 		this.DefaultNilStringInputChange("texture_name", false);
@@ -28,10 +27,6 @@ ALittleIDE.Grid9ImageS = JavaScript.Class(ALittleIDE.Grid9S, {
 			return;
 		}
 		this.ImagePathSelectCallback("texture_name", this.HandleImageTextureNameFOCUSOUT, undefined, path, true);
-	},
-	HandleFlipSELECT_CHANGE : function(event) {
-		let list = ALittleIDE.g_IDEEnum.flip_rtype;
-		this.TypeSelectChange("flip", list, false);
 	},
 	HandleAutoCut : function(event) {
 		let ui_manager = ALittleIDE.g_IDEProject.GetUIManager(this._tree_logic.user_info.module);

@@ -16,7 +16,6 @@ ALittleIDE.TextS = JavaScript.Class(ALittleIDE.DisplayObjectS, {
 		this.LoadValueData("text");
 		this.LoadDefaultNilString("font_path");
 		this.LoadDefaultNilString("font_size");
-		this.LoadEnumData("flip", ALittleIDE.g_IDEEnum.flip_type);
 	},
 	HandleBoldSELECT_CHANGE : function(event) {
 		this.BoolSelectChange("bold", false, ALittleIDE.g_IDEEnum.yn_type);
@@ -51,10 +50,6 @@ ALittleIDE.TextS = JavaScript.Class(ALittleIDE.DisplayObjectS, {
 		} else {
 			this.ValueNumZInputChange("font_size", false);
 		}
-	},
-	HandleFlipSELECT_CHANGE : function(event) {
-		let list = ALittleIDE.g_IDEEnum.flip_rtype;
-		this.TypeSelectChange("flip", list, false);
 	},
 }, "ALittleIDE.TextS");
 

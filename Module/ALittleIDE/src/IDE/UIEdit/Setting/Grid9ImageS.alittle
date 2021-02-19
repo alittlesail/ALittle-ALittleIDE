@@ -15,7 +15,6 @@ public class Grid9ImageS : Grid9S
     {
         Grid9S.LoadNatureBase(this);
         this.LoadDefaultNilString("texture_name");
-        this.LoadEnumData("flip", cast<Map<string, any>>(g_IDEEnum.flip_type));
     }
     
     public fun HandleImageTextureNameFOCUSOUT(ALittle.UIEvent event)
@@ -36,11 +35,6 @@ public class Grid9ImageS : Grid9S
 		var path = g_IDEImageSelectDialog.ShowSelect();
 		if (path == null) return;
 		this.ImagePathSelectCallback("texture_name", this.HandleImageTextureNameFOCUSOUT, null, path, true);
-    }
-    public fun HandleFlipSELECT_CHANGE(ALittle.UIEvent event)
-    {
-        var list = g_IDEEnum.flip_rtype;
-        this.TypeSelectChange("flip", cast<Map<string, any>>(list), false);
     }
     public fun HandleAutoCut(ALittle.UIEvent event)
     {

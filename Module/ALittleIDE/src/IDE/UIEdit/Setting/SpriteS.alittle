@@ -17,7 +17,6 @@ public class SpriteS : DisplayObjectS
         this.LoadValueData("col_count");
         this.LoadValueData("row_index");
         this.LoadValueData("col_index");
-        this.LoadEnumData("flip", cast<Map<string, any>>(g_IDEEnum.flip_type));
     }
     //texture_name
     public fun HandleImageTextureNameFOCUSOUT(ALittle.UIEvent event)
@@ -58,11 +57,5 @@ public class SpriteS : DisplayObjectS
     public fun HandleColIndexFOCUSOUT(ALittle.UIEvent event)
     {
         this.ValueNumInputChange("col_index", false);
-    }
-    
-    public fun HandleFlipSELECT_CHANGE(ALittle.UIEvent event)
-    {
-        var list = g_IDEEnum.flip_rtype;
-        this.TypeSelectChange("flip", cast<Map<string, any>>(list), false);
     }
 }

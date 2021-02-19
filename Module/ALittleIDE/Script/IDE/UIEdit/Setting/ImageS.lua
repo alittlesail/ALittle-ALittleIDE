@@ -19,7 +19,6 @@ end
 function ALittleIDE.ImageS:LoadNatureBase()
 	ALittleIDE.DisplayObjectS.LoadNatureBase(self)
 	self:LoadDefaultNilString("texture_name")
-	self:LoadEnumData("flip", ALittleIDE.g_IDEEnum.flip_type)
 end
 
 function ALittleIDE.ImageS:HandleImageTextureNameFOCUSOUT(event)
@@ -46,11 +45,6 @@ function ALittleIDE.ImageS:SetTextureName(texture_name, revoke_bind)
 		return
 	end
 	self:ImagePathSelectCallback("texture_name", self.HandleImageTextureNameFOCUSOUT, revoke_bind, texture_name, true)
-end
-
-function ALittleIDE.ImageS:HandleFlipSELECT_CHANGE(event)
-	local list = ALittleIDE.g_IDEEnum.flip_rtype
-	self:TypeSelectChange("flip", list, false)
 end
 
 end

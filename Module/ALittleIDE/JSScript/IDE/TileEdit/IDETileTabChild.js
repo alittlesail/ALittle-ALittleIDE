@@ -8,6 +8,12 @@ name_list : ["target","abs_x","abs_y","rel_x","rel_y","count","is_drag"],
 type_list : ["ALittle.DisplayObject","double","double","double","double","int","bool"],
 option_map : {}
 })
+ALittle.RegStruct(-1604617962, "ALittle.UIKeyDownEvent", {
+name : "ALittle.UIKeyDownEvent", ns_name : "ALittle", rl_name : "UIKeyDownEvent", hash_code : -1604617962,
+name_list : ["target","mod","sym","scancode","custom","handled"],
+type_list : ["ALittle.DisplayObject","int","int","int","bool","bool"],
+option_map : {}
+})
 ALittle.RegStruct(-1479093282, "ALittle.UIEvent", {
 name : "ALittle.UIEvent", ns_name : "ALittle", rl_name : "UIEvent", hash_code : -1479093282,
 name_list : ["target"],
@@ -38,6 +44,24 @@ name_list : ["tile_type","side_len","tile_width","tile_height","tile_x","tile_y"
 type_list : ["int","int","int","int","int","int","int","int","Map<int,string>","List<ALittle.TileLayer>"],
 option_map : {}
 })
+ALittle.RegStruct(1264799606, "ALittleIDE.IDETileClipboard", {
+name : "ALittleIDE.IDETileClipboard", ns_name : "ALittleIDE", rl_name : "IDETileClipboard", hash_code : 1264799606,
+name_list : ["cell_map","tex_map","row_count","col_count"],
+type_list : ["Map<int,Map<int,ALittle.TileCell>>","Map<int,string>","int","int"],
+option_map : {}
+})
+ALittle.RegStruct(882286932, "ALittle.UIKeyEvent", {
+name : "ALittle.UIKeyEvent", ns_name : "ALittle", rl_name : "UIKeyEvent", hash_code : 882286932,
+name_list : ["target","mod","sym","scancode","custom","handled"],
+type_list : ["ALittle.DisplayObject","int","int","int","bool","bool"],
+option_map : {}
+})
+ALittle.RegStruct(-641444818, "ALittle.UIRButtonDownEvent", {
+name : "ALittle.UIRButtonDownEvent", ns_name : "ALittle", rl_name : "UIRButtonDownEvent", hash_code : -641444818,
+name_list : ["target","abs_x","abs_y","rel_x","rel_y","count","is_drag"],
+type_list : ["ALittle.DisplayObject","double","double","double","double","int","bool"],
+option_map : {}
+})
 ALittle.RegStruct(-343663763, "ALittle.TileLayer", {
 name : "ALittle.TileLayer", ns_name : "ALittle", rl_name : "TileLayer", hash_code : -343663763,
 name_list : ["name","cell_map"],
@@ -57,6 +81,7 @@ type_list : ["int"],
 option_map : {}
 })
 
+let s_tile_clipboard = undefined;
 if (ALittle.DisplayLayout === undefined) throw new Error(" extends class:ALittle.DisplayLayout is undefined");
 ALittleIDE.IDETileContainer = JavaScript.Class(ALittle.DisplayLayout, {
 	ClipRect : function(x, y, width, height, h_move, v_move) {
@@ -115,13 +140,149 @@ ALittleIDE.IDETileTabChild = JavaScript.Class(ALittleIDE.IDETabChild, {
 		this._tile_container.AddChild(this._group_tile);
 		this._layer_edit = ALittleIDE.g_Control.CreateControl("ide_tile_layer_detail_layout");
 		ALittleIDE.g_IDECenter.center.AddEventListener(___all_struct.get(-751714957), this, this.HandleHandDrag);
+		ALittleIDE.g_IDECenter.center.AddEventListener(___all_struct.get(-459597925), this, this.HandleSelect);
+		this._tile_select_rect.visible = false;
 		this._tab_rb_quad.AddEventListener(___all_struct.get(1883782801), this, this.HandleQuadLButtonDown);
+		this._tab_rb_quad.AddEventListener(___all_struct.get(-641444818), this, this.HandleQuadRButtonDown);
 		this._tab_rb_quad.AddEventListener(___all_struct.get(1301789264), this, this.HandleQuadDragBegin);
 		this._tab_rb_quad.AddEventListener(___all_struct.get(1337289812), this, this.HandleQuadDrag);
 		this._tab_rb_quad.AddEventListener(___all_struct.get(150587926), this, this.HandleQuadDragEnd);
+		this._tab_rb_quad.AddEventListener(___all_struct.get(-1604617962), this, this.HandleQuadKeyDown);
 	},
 	HandleHandDrag : function(event) {
 		this._tab_rb_quad.hand_cursor = event.value;
+	},
+	HandleSelect : function(event) {
+		this._tile_select_rect.visible = false;
+	},
+	HandleQuadKeyDown : function(event) {
+		if (event.sym === 99 && 1073742048 & event.mod !== 0) {
+			if (ALittleIDE.g_IDECenter.center.tile_select && this._tile_select_rect.visible) {
+				this.HandleSelectCopy();
+			}
+		}
+		if (event.sym === 120 && 1073742048 & event.mod !== 0) {
+			if (ALittleIDE.g_IDECenter.center.tile_select && this._tile_select_rect.visible) {
+				this.HandleSelectCut();
+			}
+		}
+		if (event.sym === 118 && 1073742048 & event.mod !== 0) {
+			let [rel_x, rel_y] = this._tab_rb_quad.GlobalToLocalMatrix2D(A_UISystem.mouse_x, A_UISystem.mouse_y);
+			this.HandleSelectPaste(rel_x, rel_y);
+		}
+	},
+	HandleQuadRButtonDown : function(event) {
+		if (ALittleIDE.g_IDECenter.center.tile_select) {
+			if (this._tile_select_rect.visible) {
+				let menu = ALittle.NewObject(AUIPlugin.AUIRightMenu);
+				menu.AddItem("复制", this.HandleSelectCopy.bind(this));
+				menu.AddItem("剪切", this.HandleSelectCut.bind(this));
+				menu.AddItem("粘贴", this.HandleSelectPaste.bind(this, event.rel_x, event.rel_y));
+				menu.Show();
+			} else {
+				let menu = ALittle.NewObject(AUIPlugin.AUIRightMenu);
+				menu.AddItem("粘贴", this.HandleSelectPaste.bind(this, event.rel_x, event.rel_y));
+				menu.Show();
+			}
+		}
+	},
+	CalcSelectTileRectByPos : function(layer, x, y, width, height) {
+		let [begin_row, begin_col] = ALittle.Tile_CalcRowColByPos(this._user_info.tile_map, x, y);
+		if (begin_row <= 0 || begin_col <= 0) {
+			return [undefined, undefined, undefined, undefined, undefined];
+		}
+		let [end_row, end_col] = ALittle.Tile_CalcRowColByPos(this._user_info.tile_map, x + width, y + height);
+		if (end_row <= 0 || end_col <= 0) {
+			return [undefined, undefined, undefined, undefined, undefined];
+		}
+		let clipboard = this.CalcSelectTileRectByRowCol(layer, begin_row, begin_col, end_row, end_col);
+		return [clipboard, begin_row, begin_col, end_row, end_col];
+	},
+	CalcSelectTileRectByRowCol : function(layer, begin_row, begin_col, end_row, end_col) {
+		let clipboard = {};
+		clipboard.cell_map = new Map();
+		clipboard.tex_map = new Map();
+		clipboard.row_count = end_row - begin_row + 1;
+		clipboard.col_count = end_col - begin_col + 1;
+		for (let row = begin_row; row <= end_row; row += 1) {
+			let row_cell = layer._layer.cell_map.get(row);
+			if (row_cell !== undefined) {
+				for (let col = begin_col; col <= end_col; col += 1) {
+					let cell = row_cell.get(col);
+					if (cell !== undefined) {
+						let clip_row = clipboard.cell_map.get(row - begin_row + 1);
+						if (clip_row === undefined) {
+							clip_row = new Map();
+							clipboard.cell_map.set(row - begin_row + 1, clip_row);
+						}
+						clip_row.set(col - begin_col + 1, ALittle.String_CopyTable(cell));
+						if (cell.tex_id !== undefined) {
+							clipboard.tex_map.set(cell.tex_id, this._user_info.tile_map.tex_map.get(cell.tex_id));
+						}
+					}
+				}
+			}
+		}
+		return clipboard;
+	},
+	HandleSelectCopy : function() {
+		let [cur_layer] = this._layer_edit.GetCurLayerInfo();
+		if (cur_layer === undefined) {
+			g_AUITool.ShowNotice("提示", "请先选中层");
+			return;
+		}
+		let [clipboard] = this.CalcSelectTileRectByPos(cur_layer, this._tile_select_rect.x, this._tile_select_rect.y, this._tile_select_rect.width, this._tile_select_rect.height);
+		if (clipboard === undefined) {
+			return;
+		}
+		s_tile_clipboard = clipboard;
+	},
+	HandleSelectCut : function() {
+		let [cur_layer, index] = this._layer_edit.GetCurLayerInfo();
+		if (cur_layer === undefined) {
+			g_AUITool.ShowNotice("提示", "请先选中层");
+			return;
+		}
+		let [clipboard, begin_row, begin_col, end_row, end_col] = this.CalcSelectTileRectByPos(cur_layer, this._tile_select_rect.x, this._tile_select_rect.y, this._tile_select_rect.width, this._tile_select_rect.height);
+		if (clipboard === undefined) {
+			return;
+		}
+		s_tile_clipboard = clipboard;
+		let revoke = ALittle.NewObject(ALittleIDE.IDETileSelectCutRevoke, this, cur_layer, clipboard, begin_row, begin_col, end_row, end_col);
+		this._revoke_list.PushRevoke(revoke);
+		revoke.Forward();
+		this.save = false;
+	},
+	HandleSelectPaste : function(rel_x, rel_y) {
+		let [cur_layer, index] = this._layer_edit.GetCurLayerInfo();
+		if (cur_layer === undefined) {
+			g_AUITool.ShowNotice("提示", "请先选中层");
+			return;
+		}
+		if (s_tile_clipboard === undefined) {
+			return;
+		}
+		let [row_count, col_count] = this.GetRowColCount();
+		let [begin_row, begin_col] = ALittle.Tile_CalcRowColByPos(this._user_info.tile_map, rel_x, rel_y);
+		if (begin_row > row_count || begin_col > col_count) {
+			return;
+		}
+		let end_row = begin_row + s_tile_clipboard.row_count - 1;
+		let end_col = begin_col + s_tile_clipboard.col_count - 1;
+		if (end_row >= row_count) {
+			end_row = row_count;
+		}
+		if (end_col >= col_count) {
+			end_col = col_count;
+		}
+		let old_clipboard = this.CalcSelectTileRectByRowCol(cur_layer, begin_row, begin_col, end_row, end_col);
+		if (old_clipboard === undefined) {
+			return;
+		}
+		let revoke = ALittle.NewObject(ALittleIDE.IDETileSelectPasteRevoke, this, cur_layer, old_clipboard, s_tile_clipboard, begin_row, begin_col, end_row, end_col);
+		this._revoke_list.PushRevoke(revoke);
+		revoke.Forward();
+		this.save = false;
 	},
 	HandleQuadLButtonDown : function(event) {
 		if (ALittleIDE.g_IDECenter.center.tile_brush) {
@@ -206,6 +367,14 @@ ALittleIDE.IDETileTabChild = JavaScript.Class(ALittleIDE.IDETabChild, {
 		if (ALittleIDE.g_IDECenter.center.tile_handdrag) {
 			event.target = this._tab_screen;
 			this._tab_screen.DispatchEvent(___all_struct.get(1301789264), event);
+		} else if (ALittleIDE.g_IDECenter.center.tile_select) {
+			this._select_x = event.rel_x;
+			this._select_y = event.rel_y;
+			this._tile_select_rect.visible = true;
+			this._tile_select_rect.width = 0;
+			this._tile_select_rect.height = 0;
+			this._tile_select_rect.x = this._select_x;
+			this._tile_select_rect.y = this._select_y;
 		}
 	},
 	HandleQuadDrag : function(event) {
@@ -291,6 +460,21 @@ ALittleIDE.IDETileTabChild = JavaScript.Class(ALittleIDE.IDETabChild, {
 			let revoke = ALittle.NewObject(ALittleIDE.IDETileBrushCellRevoke, this, layer_info, cell, image, old_tex_path, undefined);
 			this._revoke_list.PushRevoke(revoke);
 			this.save = false;
+		} else if (ALittleIDE.g_IDECenter.center.tile_select) {
+			if (event.rel_x > this._select_x) {
+				this._tile_select_rect.x = this._select_x;
+				this._tile_select_rect.width = event.rel_x - this._select_x;
+			} else {
+				this._tile_select_rect.x = event.rel_x;
+				this._tile_select_rect.width = this._select_x - event.rel_x;
+			}
+			if (event.rel_y > this._select_y) {
+				this._tile_select_rect.y = this._select_y;
+				this._tile_select_rect.height = event.rel_y - this._select_y;
+			} else {
+				this._tile_select_rect.y = event.rel_y;
+				this._tile_select_rect.height = this._select_y - event.rel_y;
+			}
 		}
 	},
 	HandleQuadDragEnd : function(event) {
@@ -299,6 +483,7 @@ ALittleIDE.IDETileTabChild = JavaScript.Class(ALittleIDE.IDETabChild, {
 			event.target = this._tab_screen;
 			this._tab_screen.DispatchEvent(___all_struct.get(150587926), event);
 		} else if (ALittleIDE.g_IDECenter.center.tile_erase) {
+		} else if (ALittleIDE.g_IDECenter.center.tile_select) {
 		}
 		this._drag_cell_row = undefined;
 		this._drag_cell_col = undefined;
@@ -315,6 +500,7 @@ ALittleIDE.IDETileTabChild = JavaScript.Class(ALittleIDE.IDETabChild, {
 		this._layer_edit.visible = false;
 	},
 	OnShow : function() {
+		ALittleIDE.g_IDECenter.center.HideAllToolContainer();
 		ALittleIDE.g_IDECenter.center.tool_tile.visible = true;
 		this._layer_edit.visible = true;
 		ALittleIDE.g_IDECenter.center.detail_tree_tab.tab = ALittleIDE.g_IDECenter.center.tile_brush_edit;
@@ -349,10 +535,25 @@ ALittleIDE.IDETileTabChild = JavaScript.Class(ALittleIDE.IDETabChild, {
 		linear_2.y = ALittle.Tile_CalcLinear2OffsetY(this._user_info.tile_map);
 		group.AddChild(linear_2);
 		this._group_tile.AddChild(group);
-		let row_count = this._linear_grid_1.child_count;
-		let col_count = this._linear_grid_1.childs[1 - 1].child_count;
+		let [row_count, col_count] = this.GetRowColCount();
 		this.ResizeLinear(linear_1, linear_2, row_count, col_count, this._group_tile.child_count);
 		return [group, linear_1, linear_2];
+	},
+	GetRowColCount : function() {
+		let cur_row_count = 0;
+		let cur_col_count = 0;
+		if (this._user_info.tile_map.tile_type === 2) {
+			cur_row_count = this._linear_grid_1.child_count + this._linear_grid_2.child_count;
+			if (cur_row_count > 0) {
+				cur_col_count = this._linear_grid_1.childs[1 - 1].child_count;
+			}
+		} else {
+			cur_row_count = this._linear_grid_1.child_count;
+			if (cur_row_count > 0) {
+				cur_col_count = this._linear_grid_1.childs[1 - 1].child_count + this._linear_grid_2.childs[1 - 1].child_count;
+			}
+		}
+		return [cur_row_count, cur_col_count];
 	},
 	GetLayer : function(index) {
 		let group = this._group_tile.GetChildByIndex(index);
@@ -371,14 +572,46 @@ ALittleIDE.IDETileTabChild = JavaScript.Class(ALittleIDE.IDETabChild, {
 		let tile_type = this._user_info.tile_map.tile_type;
 		if (tile_type === 2) {
 			if (row % 2 === 1) {
-				return linear_1.childs[ALittle.Math_Floor(row / 2) + 1 - 1].childs[col - 1]._user_data;
+				let sub_linear = linear_1.childs[ALittle.Math_Floor(row / 2) + 1 - 1];
+				if (sub_linear === undefined) {
+					return undefined;
+				}
+				let child = sub_linear.childs[col - 1];
+				if (child === undefined) {
+					return undefined;
+				}
+				return child._user_data;
 			}
-			return linear_2.childs[ALittle.Math_Floor(row / 2) - 1].childs[col - 1]._user_data;
+			let sub_linear = linear_2.childs[ALittle.Math_Floor(row / 2) - 1];
+			if (sub_linear === undefined) {
+				return undefined;
+			}
+			let child = sub_linear.childs[col - 1];
+			if (child === undefined) {
+				return undefined;
+			}
+			return child._user_data;
 		} else {
 			if (col % 2 === 1) {
-				return linear_1.childs[row - 1].childs[ALittle.Math_Floor(col / 2) + 1 - 1]._user_data;
+				let sub_linear = linear_1.childs[row - 1];
+				if (sub_linear === undefined) {
+					return undefined;
+				}
+				let child = sub_linear.childs[ALittle.Math_Floor(col / 2) + 1 - 1];
+				if (child === undefined) {
+					return undefined;
+				}
+				return child._user_data;
 			}
-			return linear_2.childs[row - 1].childs[ALittle.Math_Floor(col / 2) - 1]._user_data;
+			let sub_linear = linear_2.childs[row - 1];
+			if (sub_linear === undefined) {
+				return undefined;
+			}
+			let child = sub_linear.childs[ALittle.Math_Floor(col / 2) - 1];
+			if (child === undefined) {
+				return undefined;
+			}
+			return child._user_data;
 		}
 	},
 	AddLayer : function(group, index) {

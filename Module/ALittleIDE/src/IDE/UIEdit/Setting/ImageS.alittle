@@ -12,7 +12,6 @@ public class ImageS : DisplayObjectS
     {
         DisplayObjectS.LoadNatureBase(this);
         this.LoadDefaultNilString("texture_name");
-        this.LoadEnumData("flip", cast<Map<string, any>>(g_IDEEnum.flip_type));
     }
     //texture_name
     public fun HandleImageTextureNameFOCUSOUT(ALittle.UIEvent event)
@@ -39,11 +38,5 @@ public class ImageS : DisplayObjectS
     {
         if (texture_name == null) return;
         this.ImagePathSelectCallback("texture_name", this.HandleImageTextureNameFOCUSOUT, revoke_bind, texture_name, true);
-    }
-    
-    public fun HandleFlipSELECT_CHANGE(ALittle.UIEvent event)
-    {
-        var list = g_IDEEnum.flip_rtype;
-        this.TypeSelectChange("flip", cast<Map<string,any>>(list), false);
     }
 }

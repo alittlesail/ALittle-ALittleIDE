@@ -55,6 +55,7 @@ ALittleIDE.IDECodeTabChild = JavaScript.Class(ALittleIDE.IDETabChild, {
 	},
 	OnShow : function() {
 		this._edit.OnShow();
+		ALittleIDE.g_IDECenter.center.HideAllToolContainer();
 		ALittleIDE.g_IDECenter.center.tool_code.visible = true;
 	},
 	OnClose : function() {

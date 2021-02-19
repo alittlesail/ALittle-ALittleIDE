@@ -26,9 +26,6 @@ class IDEEnum
 
 	public Map<bool, string> aje_type;
 	public Map<string, bool> aje_rtype;
-
-	public Map<int, string> flip_type;
-	public Map<string, int> flip_rtype;
 	
 	public Map<int, string> select_type;
 	public Map<string, int> select_rtype;
@@ -132,18 +129,6 @@ class IDEEnum
 		this.aje_rtype["拒绝默认事件"] = false;
 		this.aje_rtype["接受默认事件"] = true;
 
-		this.flip_type = new Map<int, string>();
-		this.flip_type[ALittle.UIEnumTypes.FLIP_NONE] = "无";
-		this.flip_type[ALittle.UIEnumTypes.FLIP_H] = "水平";
-		this.flip_type[ALittle.UIEnumTypes.FLIP_V] = "垂直";
-		this.flip_type[ALittle.UIEnumTypes.FLIP_HV] = "水平+垂直";
-
-		this.flip_rtype = new Map<string, int>();
-		this.flip_rtype["无"] = ALittle.UIEnumTypes.FLIP_NONE;
-		this.flip_rtype["水平"] = ALittle.UIEnumTypes.FLIP_H;
-		this.flip_rtype["垂直"] = ALittle.UIEnumTypes.FLIP_V;
-		this.flip_rtype["水平+垂直"] = ALittle.UIEnumTypes.FLIP_HV;
-		
 		this.select_type = new Map<int, string>();
 		this.select_type[ALittle.UIEnumTypes.SELECT_NONE] = "无";
 		this.select_type[ALittle.UIEnumTypes.SELECT_FILE] = "选择文件";

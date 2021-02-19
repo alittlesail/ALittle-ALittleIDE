@@ -76,16 +76,6 @@ function ALittleIDE.IDEEnum:Ctor()
 	___rawset(self, "aje_rtype", {})
 	self.aje_rtype["拒绝默认事件"] = false
 	self.aje_rtype["接受默认事件"] = true
-	___rawset(self, "flip_type", {})
-	self.flip_type[0] = "无"
-	self.flip_type[1] = "水平"
-	self.flip_type[2] = "垂直"
-	self.flip_type[3] = "水平+垂直"
-	___rawset(self, "flip_rtype", {})
-	self.flip_rtype["无"] = 0
-	self.flip_rtype["水平"] = 1
-	self.flip_rtype["垂直"] = 2
-	self.flip_rtype["水平+垂直"] = 3
 	___rawset(self, "select_type", {})
 	self.select_type[0] = "无"
 	self.select_type[1] = "选择文件"

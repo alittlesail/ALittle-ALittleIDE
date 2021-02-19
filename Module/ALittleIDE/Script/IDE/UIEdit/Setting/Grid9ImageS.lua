@@ -19,7 +19,6 @@ end
 function ALittleIDE.Grid9ImageS:LoadNatureBase()
 	ALittleIDE.Grid9S.LoadNatureBase(self)
 	self:LoadDefaultNilString("texture_name")
-	self:LoadEnumData("flip", ALittleIDE.g_IDEEnum.flip_type)
 end
 
 function ALittleIDE.Grid9ImageS:HandleImageTextureNameFOCUSOUT(event)
@@ -41,11 +40,6 @@ function ALittleIDE.Grid9ImageS:HandleImageTextureNameSelect(event)
 	self:ImagePathSelectCallback("texture_name", self.HandleImageTextureNameFOCUSOUT, nil, path, true)
 end
 ALittleIDE.Grid9ImageS.HandleImageTextureNameSelect = Lua.CoWrap(ALittleIDE.Grid9ImageS.HandleImageTextureNameSelect)
-
-function ALittleIDE.Grid9ImageS:HandleFlipSELECT_CHANGE(event)
-	local list = ALittleIDE.g_IDEEnum.flip_rtype
-	self:TypeSelectChange("flip", list, false)
-end
 
 function ALittleIDE.Grid9ImageS:HandleAutoCut(event)
 	local ui_manager = ALittleIDE.g_IDEProject:GetUIManager(self._tree_logic.user_info.module)
