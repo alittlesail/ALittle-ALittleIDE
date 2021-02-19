@@ -117,6 +117,10 @@ function ALittleIDE.IDEUITree:UpdateDesc()
 		title = title .. self._user_info.base.text
 	elseif self._user_info.default.text ~= nil then
 		title = title .. self._user_info.default.text
+	elseif self._user_info.base.texture_name ~= nil then
+		title = title .. ALittle.File_GetFileNameByPath(self._user_info.base.texture_name)
+	elseif self._user_info.default.texture_name ~= nil then
+		title = title .. ALittle.File_GetFileNameByPath(self._user_info.default.texture_name)
 	end
 	self._item_button.text = title
 	if self._user_info.child_type == nil then

@@ -98,6 +98,10 @@ public class IDEUITreeItem : IDEUITreeLogic
 			title = title..this._user_info.base.text;
 		elseif (this._user_info.default.text != null)
 			title = title..this._user_info.default.text;
+		elseif (this._user_info.base.texture_name != null)
+			title = title..ALittle.File_GetFileNameByPath(this._user_info.base.texture_name);
+		elseif (this._user_info.default.texture_name != null)
+			title = title..ALittle.File_GetFileNameByPath(this._user_info.default.texture_name);
 
 		this._item_button.text = title;
 	

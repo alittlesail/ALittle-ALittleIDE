@@ -29,6 +29,7 @@ public class TriangleS : DisplayObjectS
 	public fun HandleImageTextureNameFOCUSOUT(ALittle.UIEvent event)
 	{
 		this.DefaultNilStringInputChange("texture_name", false);
+        this._tree_logic.UpdateDesc();
 	}
 	//texture_name
 	public async fun HandleImageTextureNameSelect(ALittle.UIEvent event)

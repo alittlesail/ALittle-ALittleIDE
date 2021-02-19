@@ -35,6 +35,7 @@ end
 
 function ALittleIDE.TriangleS:HandleImageTextureNameFOCUSOUT(event)
 	self:DefaultNilStringInputChange("texture_name", false)
+	self._tree_logic:UpdateDesc()
 end
 
 function ALittleIDE.TriangleS:HandleImageTextureNameSelect(event)

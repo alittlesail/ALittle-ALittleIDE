@@ -39,6 +39,7 @@ end
 
 function ALittleIDE.VertexImageS:HandleImageTextureNameFOCUSOUT(event)
 	self:DefaultNilStringInputChange("texture_name", false)
+	self._tree_logic:UpdateDesc()
 end
 
 function ALittleIDE.VertexImageS:HandleImageTextureNameSelect(event)

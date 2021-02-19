@@ -27,6 +27,7 @@ end
 
 function ALittleIDE.SpriteS:HandleImageTextureNameFOCUSOUT(event)
 	self:DefaultNilStringInputChange("texture_name", false)
+	self._tree_logic:UpdateDesc()
 end
 
 function ALittleIDE.SpriteS:HandleImageTextureNameSelect(event)

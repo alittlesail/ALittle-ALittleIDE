@@ -23,6 +23,7 @@ end
 
 function ALittleIDE.Grid9ImageS:HandleImageTextureNameFOCUSOUT(event)
 	self:DefaultNilStringInputChange("texture_name", false)
+	self._tree_logic:UpdateDesc()
 	self:HandleAutoCut(event)
 end
 

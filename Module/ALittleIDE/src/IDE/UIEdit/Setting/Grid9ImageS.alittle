@@ -20,6 +20,7 @@ public class Grid9ImageS : Grid9S
     public fun HandleImageTextureNameFOCUSOUT(ALittle.UIEvent event)
     {
         this.DefaultNilStringInputChange("texture_name", false);
+		this._tree_logic.UpdateDesc();
         this.HandleAutoCut(event);
     }
     public async fun HandleImageTextureNameSelect(ALittle.UIEvent event)
