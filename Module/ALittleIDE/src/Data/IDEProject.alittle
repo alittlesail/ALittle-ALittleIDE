@@ -350,7 +350,7 @@ public class IDEProject : ALittle.EventDispatcher
         this._debug_loop.Start();
 
         // 添加断点信息
-        var break_map = this._project.config.GetConfig{Map<string, List<int>>}("break_points", null);
+        var break_map = this._project.config.GetConfig("break_points", new Map<string, List<int>>());
         for (var file_path, lines in break_map)
             for (var index, line in lines)
                 this._debug_client.AddBreakPoint(file_path, line);
