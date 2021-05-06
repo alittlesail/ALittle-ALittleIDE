@@ -118,7 +118,7 @@ public static IDEUIUtility_NewGiveBaseCase(ALittle.DisplayInfo info, ALittle.Dis
 		{
 			info.text = "123456789";
 			object.text = "123456789";
-			cast<ALittle.Text>(object).RejuseSize();
+			cast<ALittle.Text>(object).AdjustSize();
 		}
 		// 如果不是的话，就设置一下大小
 		else
