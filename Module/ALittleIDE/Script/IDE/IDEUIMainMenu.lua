@@ -100,6 +100,7 @@ function ALittleIDE.IDEUIMainMenu:HandleGenCoreAllInOneClick()
 		ALittle.List_Push(file_list, base_path .. "Core/Coroutine.js")
 		ALittle.List_Push(file_list, base_path .. "Core/Net.js")
 		ALittle.List_Push(file_list, base_path .. "Core/Worker.js")
+		ALittle.List_Push(file_list, base_path .. "Core/Require.js")
 		for index, path in ___ipairs(file_list) do
 			all_in_one[index] = ALittle.File_ReadTextFromStdFile(path)
 			if all_in_one[index] == nil then
@@ -130,6 +131,7 @@ function ALittleIDE.IDEUIMainMenu:HandleGenCoreAllInOneClick()
 		ALittle.List_Push(file_list, base_path .. "Core/Coroutine.lua")
 		ALittle.List_Push(file_list, base_path .. "Core/Net.lua")
 		ALittle.List_Push(file_list, base_path .. "Core/Worker.lua")
+		ALittle.List_Push(file_list, base_path .. "Core/Require.lua")
 		for index, path in ___ipairs(file_list) do
 			all_in_one[index] = ALittle.File_ReadTextFromStdFile(path)
 			if all_in_one[index] == nil then
