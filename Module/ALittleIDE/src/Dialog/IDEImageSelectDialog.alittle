@@ -3,11 +3,12 @@ namespace ALittleIDE;
 
 public class IDEImageSelectDialog : AUIPlugin.AUIFileSelectDialog
 {
-	public ctor(string title, ALittle.DisplayLayout layer, List<string> ext_list)
-	{
+    public fun Setup()
+    {
 		g_IDEProject.AddEventListener(this, this.HandleCloseProject);
 		this.AddEventListener(this, this.HandleImageSelectRButtonDown);
-	}
+    }
+
 	
 	private fun HandleCloseProject(IDEProjectCloseEvent event)
 	{	

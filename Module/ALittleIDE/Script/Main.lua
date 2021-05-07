@@ -52,35 +52,96 @@ function ALittleIDE.__Module_Setup(layer_group, control, module_base_path, scrip
 	ALittleIDE.g_DialogLayer.width_type = 4
 	ALittleIDE.g_DialogLayer.height_type = 4
 	ALittleIDE.g_LayerGroup:AddChild(ALittleIDE.g_DialogLayer)
-	RequireFromPaths(script_base_path, "Data/", {"IDEUIManager.alittle", "IDEProject.alittle", "IDEEnum.alittle"})
-	RequireFromPaths(script_base_path, "Dialog/", {"IDEVersionList.alittle", "IDEProjectSettingDialog.alittle", "IDEProjectOpenDialog.alittle"
-		, "IDEProjectNewDialog.alittle", "IDEProjectFindFileDialog.alittle", "IDEProjectExportDialog.alittle"
-		, "IDEImageSelectDialog.alittle", "IDEExport.alittle"})
-	RequireFromPaths(script_base_path, "IDE/", {"IDEUtility.alittle", "IDEUIProjectList.alittle", "IDEUIProjectDropdown.alittle"
-		, "IDEUIMainMenu.alittle", "IDEUICenter.alittle", "IDEUIAccount.alittle"
-		, "IDEContentEdit.alittle", "IDECenter.alittle", "CodeEdit/IDEUICodeList.alittle"
-		, "CodeEdit/IDECodeUtility.alittle", "CodeEdit/IDECodeTabChild.alittle", "CodeEdit/Tree/IDECodeTreeLogic.alittle"
-		, "CodeEdit/Tree/IDECodeTreeItem.alittle", "CodeEdit/Tree/IDECodeTree.alittle", "ControlEdit/IDEUIControlList.alittle"
-		, "ControlEdit/IDEControlUtility.alittle", "ControlEdit/Tree/IDEControlTreeLogic.alittle", "ControlEdit/Tree/IDEControlTreeItem.alittle"
-		, "ControlEdit/Tree/IDEControlTree.alittle", "TileEdit/IDEUITileList.alittle", "TileEdit/IDEUITileBrushList.alittle"
-		, "TileEdit/IDEUITileBrushEdit.alittle", "TileEdit/IDETileTabChild.alittle", "TileEdit/IDETileRevocation.alittle"
-		, "TileEdit/Dialog/IDETileSettingDialog.alittle", "UIEdit/IDEUIUtility.alittle", "UIEdit/IDEUITabChild.alittle"
-		, "UIEdit/IDEUIRevocation.alittle", "UIEdit/IDEUIControlTree.alittle", "UIEdit/IDEUIControlAnti.alittle"
-		, "UIEdit/Dialog/IDEAttrTextDialog.alittle", "UIEdit/Dialog/IDEAttrEventDialog.alittle", "UIEdit/Dialog/IDEAttrControlDialog.alittle"
-		, "UIEdit/Setting/DisplayObjectS.alittle", "UIEdit/Setting/DisplayLayoutS.alittle", "UIEdit/Setting/DialogS.alittle"
-		, "UIEdit/Setting/VertexImageS.alittle", "UIEdit/Setting/TriangleS.alittle", "UIEdit/Setting/TileTableS.alittle"
-		, "UIEdit/Setting/TextS.alittle", "UIEdit/Setting/TextEditS.alittle", "UIEdit/Setting/TextCheckButtonS.alittle"
-		, "UIEdit/Setting/TextButtonS.alittle", "UIEdit/Setting/TextAreaS.alittle", "UIEdit/Setting/TabS.alittle"
-		, "UIEdit/Setting/SpriteS.alittle", "UIEdit/Setting/SpritePlayS.alittle", "UIEdit/Setting/SpriteNumberS.alittle"
-		, "UIEdit/Setting/SpringTextButtonS.alittle", "UIEdit/Setting/SliderS.alittle", "UIEdit/Setting/ScrollScreenS.alittle"
-		, "UIEdit/Setting/ScrollListS.alittle", "UIEdit/Setting/ScrollButtonS.alittle", "UIEdit/Setting/RichInputS.alittle"
-		, "UIEdit/Setting/RichEditS.alittle", "UIEdit/Setting/RichAreaS.alittle", "UIEdit/Setting/QuadS.alittle"
-		, "UIEdit/Setting/PiechartS.alittle", "UIEdit/Setting/LinearS.alittle", "UIEdit/Setting/ImageS.alittle"
-		, "UIEdit/Setting/ImagePlayS.alittle", "UIEdit/Setting/ImageEditS.alittle", "UIEdit/Setting/Grid9S.alittle"
-		, "UIEdit/Setting/Grid9ImageS.alittle", "UIEdit/Setting/Grid3S.alittle", "UIEdit/Setting/FramePlayS.alittle"
-		, "UIEdit/Setting/DropDownS.alittle", "UIEdit/Setting/DisplayViewS.alittle", "UIEdit/Setting/TextRadioButtonS.alittle"
-		, "UIEdit/Setting/TextInputS.alittle", "UIEdit/Setting/ScrollBarS.alittle", "UIEdit/Setting/ImageInputS.alittle"
-		, "UIEdit/Tree/IDEUITreeLogic.alittle", "UIEdit/Tree/IDEUITreeItem.alittle", "UIEdit/Tree/IDEUITree.alittle"})
+	local require = ALittle.Require()
+	require:AddPaths(script_base_path, "Data/", {{"IDEEnum"}
+		,{"IDEProject"}
+		,{"IDEUIManager"}})
+	require:AddPaths(script_base_path, "Dialog/", {{"IDEExport"}
+		,{"IDEImageSelectDialog"}
+		,{"IDEProjectExportDialog"}
+		,{"IDEProjectFindFileDialog"}
+		,{"IDEProjectNewDialog"}
+		,{"IDEProjectOpenDialog"}
+		,{"IDEProjectSettingDialog"}
+		,{"IDEVersionList"}})
+	require:AddPaths(script_base_path, "IDE/", {{"CodeEdit/IDECodeTabChild","IDEContentEdit"}
+		,{"CodeEdit/IDECodeUtility"}
+		,{"CodeEdit/IDEUICodeList"}
+		,{"CodeEdit/Tree/IDECodeTree","CodeEdit/Tree/IDECodeTreeLogic"}
+		,{"CodeEdit/Tree/IDECodeTreeItem","CodeEdit/Tree/IDECodeTreeLogic"}
+		,{"CodeEdit/Tree/IDECodeTreeLogic"}
+		,{"ControlEdit/IDEControlUtility"}
+		,{"ControlEdit/IDEUIControlList"}
+		,{"ControlEdit/Tree/IDEControlTree","ControlEdit/Tree/IDEControlTreeLogic"}
+		,{"ControlEdit/Tree/IDEControlTreeItem","ControlEdit/Tree/IDEControlTreeLogic"}
+		,{"ControlEdit/Tree/IDEControlTreeLogic"}
+		,{"IDECenter"}
+		,{"IDEContentEdit"}
+		,{"IDEUIAccount"}
+		,{"IDEUICenter"}
+		,{"IDEUIMainMenu"}
+		,{"IDEUIProjectDropdown"}
+		,{"IDEUIProjectList"}
+		,{"IDEUtility"}
+		,{"TileEdit/Dialog/IDETileSettingDialog"}
+		,{"TileEdit/IDETileRevocation"}
+		,{"TileEdit/IDETileTabChild","IDEContentEdit"}
+		,{"TileEdit/IDEUITileBrushEdit"}
+		,{"TileEdit/IDEUITileBrushList"}
+		,{"TileEdit/IDEUITileList"}
+		,{"UIEdit/Dialog/IDEAttrControlDialog"}
+		,{"UIEdit/Dialog/IDEAttrEventDialog"}
+		,{"UIEdit/Dialog/IDEAttrTextDialog"}
+		,{"UIEdit/IDEUIControlAnti"}
+		,{"UIEdit/IDEUIControlTree"}
+		,{"UIEdit/IDEUIRevocation"}
+		,{"UIEdit/IDEUITabChild","IDEContentEdit"}
+		,{"UIEdit/IDEUIUtility"}
+		,{"UIEdit/Setting/DialogS","UIEdit/Setting/DisplayLayoutS"}
+		,{"UIEdit/Setting/DisplayLayoutS","UIEdit/Setting/DisplayObjectS"}
+		,{"UIEdit/Setting/DisplayObjectS"}
+		,{"UIEdit/Setting/DisplayViewS","UIEdit/Setting/DisplayObjectS"}
+		,{"UIEdit/Setting/DropDownS","UIEdit/Setting/TextCheckButtonS"}
+		,{"UIEdit/Setting/FramePlayS","UIEdit/Setting/DisplayLayoutS"}
+		,{"UIEdit/Setting/Grid3S","UIEdit/Setting/DisplayLayoutS"}
+		,{"UIEdit/Setting/Grid9ImageS","UIEdit/Setting/Grid9S"}
+		,{"UIEdit/Setting/Grid9S","UIEdit/Setting/DisplayLayoutS"}
+		,{"UIEdit/Setting/ImageEditS","UIEdit/Setting/TextEditS"}
+		,{"UIEdit/Setting/ImageInputS","UIEdit/Setting/TextInputS"}
+		,{"UIEdit/Setting/ImagePlayS","UIEdit/Setting/DisplayObjectS"}
+		,{"UIEdit/Setting/ImageS","UIEdit/Setting/DisplayObjectS"}
+		,{"UIEdit/Setting/LinearS","UIEdit/Setting/DisplayLayoutS"}
+		,{"UIEdit/Setting/PiechartS","UIEdit/Setting/DisplayLayoutS"}
+		,{"UIEdit/Setting/QuadS","UIEdit/Setting/DisplayObjectS"}
+		,{"UIEdit/Setting/RichAreaS","UIEdit/Setting/DisplayLayoutS"}
+		,{"UIEdit/Setting/RichEditS","UIEdit/Setting/DisplayLayoutS"}
+		,{"UIEdit/Setting/RichInputS","UIEdit/Setting/DisplayLayoutS"}
+		,{"UIEdit/Setting/ScrollBarS","UIEdit/Setting/Grid3S"}
+		,{"UIEdit/Setting/ScrollButtonS","UIEdit/Setting/DisplayLayoutS"}
+		,{"UIEdit/Setting/ScrollListS","UIEdit/Setting/DisplayLayoutS"}
+		,{"UIEdit/Setting/ScrollScreenS","UIEdit/Setting/DisplayLayoutS"}
+		,{"UIEdit/Setting/SliderS","UIEdit/Setting/DisplayLayoutS"}
+		,{"UIEdit/Setting/SpringTextButtonS","UIEdit/Setting/DisplayLayoutS"}
+		,{"UIEdit/Setting/SpriteNumberS","UIEdit/Setting/DisplayObjectS"}
+		,{"UIEdit/Setting/SpritePlayS","UIEdit/Setting/SpriteS"}
+		,{"UIEdit/Setting/SpriteS","UIEdit/Setting/DisplayObjectS"}
+		,{"UIEdit/Setting/TabS","UIEdit/Setting/DisplayLayoutS"}
+		,{"UIEdit/Setting/TextAreaS","UIEdit/Setting/TextS"}
+		,{"UIEdit/Setting/TextButtonS","UIEdit/Setting/DisplayLayoutS"}
+		,{"UIEdit/Setting/TextCheckButtonS","UIEdit/Setting/DisplayLayoutS"}
+		,{"UIEdit/Setting/TextEditS","UIEdit/Setting/TextS"}
+		,{"UIEdit/Setting/TextInputS","UIEdit/Setting/TextEditS"}
+		,{"UIEdit/Setting/TextRadioButtonS","UIEdit/Setting/TextCheckButtonS"}
+		,{"UIEdit/Setting/TextS","UIEdit/Setting/DisplayObjectS"}
+		,{"UIEdit/Setting/TileTableS","UIEdit/Setting/DisplayLayoutS"}
+		,{"UIEdit/Setting/TriangleS","UIEdit/Setting/DisplayObjectS"}
+		,{"UIEdit/Setting/VertexImageS","UIEdit/Setting/DisplayObjectS"}
+		,{"UIEdit/Tree/IDEUITree","UIEdit/Tree/IDEUITreeLogic"}
+		,{"UIEdit/Tree/IDEUITreeItem","UIEdit/Tree/IDEUITreeLogic"}
+		,{"UIEdit/Tree/IDEUITreeLogic"}})
+	require:Start()
+	ALittleIDE.g_IDEImageSelectDialog:Setup()
+	ALittleIDE.g_IDEImageManagerDialog:Setup()
 	ALittleIDE.g_IDECenter:Setup()
 end
 ALittleIDE.__Module_Setup = Lua.CoWrap(ALittleIDE.__Module_Setup)

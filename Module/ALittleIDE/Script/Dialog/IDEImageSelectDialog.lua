@@ -24,7 +24,7 @@ option_map = {}
 assert(AUIPlugin.AUIFileSelectDialog, " extends class:AUIPlugin.AUIFileSelectDialog is nil")
 ALittleIDE.IDEImageSelectDialog = Lua.Class(AUIPlugin.AUIFileSelectDialog, "ALittleIDE.IDEImageSelectDialog")
 
-function ALittleIDE.IDEImageSelectDialog:Ctor(title, layer, ext_list)
+function ALittleIDE.IDEImageSelectDialog:Setup()
 	ALittleIDE.g_IDEProject:AddEventListener(___all_struct[-332308624], self, self.HandleCloseProject)
 	self:AddEventListener(___all_struct[1821709712], self, self.HandleImageSelectRButtonDown)
 end

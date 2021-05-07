@@ -83,6 +83,9 @@ public async static __Module_Setup(ALittle.DisplayLayout layer_group, ALittle.Co
     require.AddPaths(script_base_path, "IDE/", paths("src/IDE"));
     require.Start();
 
+	g_IDEImageSelectDialog.Setup();
+	g_IDEImageManagerDialog.Setup();
+
     // 初始化
     g_IDECenter.Setup();
 }
