@@ -20,6 +20,7 @@ require('./Module/abcd@project_name@abcd/JSNative/pixi.min.wx');
 import {install} from './Module/abcd@project_name@abcd/JSNative/unsafe-eval/install';
 install(PIXI);
 require('./Module/abcd@project_name@abcd/JSNative/pixi-textinput');
+require('./Module/abcd@project_name@abcd/JSNative/pixi-sound');
 
 // 游戏资源所在的域名，端口，起始路径
 window.alittle_hostname = "abcd@res_ip@abcd";
