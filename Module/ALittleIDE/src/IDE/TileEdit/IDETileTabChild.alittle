@@ -49,8 +49,8 @@ public class IDETileTabChild : IDETabChild
 {
     private IDETileTreeUserInfo _user_info;
 	private ALittle.ScrollScreen _tab_screen;        // 标签页
-    private IDETileLinearContainer _tile_container;
-    private ALittle.DisplayLayout _tab_rb_quad;
+    private IDETileLinearContainer _tile_container;	// 容器
+    private ALittle.DisplayLayout _tab_rb_quad;	// 操作
 
     private ALittle.DisplayLayout _tile_select_rect;
 
@@ -71,33 +71,42 @@ public class IDETileTabChild : IDETabChild
 
 	public ctor(ALittle.ControlSystem ctrl_sys, string module, string name, bool save, IDETileTreeUserInfo user_info)
 	{
+        // 保存携带信息
         this._user_info = user_info;
 
+        // 分页滚动屏
 		this._tab_screen = g_Control.CreateControl{ALittle.ScrollScreen}("ide_tile_tab_screen", this);
         this._tab_screen._user_data = this;
         this._tab_screen.container = new IDETileContainer(g_Control);
 
+        // 格子线奇数行容器
         this._linear_grid_1 = new ALittle.Linear(g_Control);
         this._linear_grid_1.type = ALittle.UIEnumTypes.TYPE_V;
         this._tile_container._linear_grid_1 = this._linear_grid_1;
         this._tile_container.AddChild(this._linear_grid_1);
 
+        // 格子线偶数行容器
         this._linear_grid_2 = new ALittle.Linear(g_Control);
         this._linear_grid_2.type = ALittle.UIEnumTypes.TYPE_V;
         this._tile_container._linear_grid_2 = this._linear_grid_2;
         this._tile_container.AddChild(this._linear_grid_2);
 
+        // 其他物件的容器
         this._group_tile = new ALittle.DisplayGroup(g_Control);
         this._tile_container._group_tile = this._group_tile;
         this._tile_container.AddChild(this._group_tile);
 
+        // 地图层管理
         this._layer_edit = g_Control.CreateControl{IDEUITileLayerEdit}("ide_tile_layer_detail_layout");
 
+        // 处理拖拽，选中
         g_IDECenter.center.AddEventListener(this, this.HandleHandDrag);
         g_IDECenter.center.AddEventListener(this, this.HandleSelect);
 
+        // 选中区域
         this._tile_select_rect.visible = false;
         
+        // 选中操作
         this._tab_rb_quad.AddEventListener(this, this.HandleQuadLButtonDown);
         this._tab_rb_quad.AddEventListener(this, this.HandleQuadRButtonDown);
         this._tab_rb_quad.AddEventListener(this, this.HandleQuadDragBegin);
@@ -106,16 +115,19 @@ public class IDETileTabChild : IDETabChild
         this._tab_rb_quad.AddEventListener(this, this.HandleQuadKeyDown);
     }
 
+    // 选中拖拽工具
     private fun HandleHandDrag(IDEUICenterTileHandDragOpChangedEvent event)
     {
         this._tab_rb_quad.hand_cursor = event.value;
     }
 
+    // 选中选择工具
     private fun HandleSelect(IDEUICenterTileSelectOpChangedEvent event)
     {
         this._tile_select_rect.visible = false;
     }
 
+    // 处理按键
     private fun HandleQuadKeyDown(ALittle.UIKeyDownEvent event)
     {
         // Ctrl + C
@@ -140,10 +152,13 @@ public class IDETileTabChild : IDETabChild
         }
     }
 
+    // 处理右键按钮按下
     private fun HandleQuadRButtonDown(ALittle.UIRButtonDownEvent event)
     {
+        // 如果选中选择工具
         if (g_IDECenter.center.tile_select)
         {
+            // 选中范围
             if (this._tile_select_rect.visible)
             {
                 var menu = new AUIPlugin.AUIRightMenu();
@@ -161,6 +176,7 @@ public class IDETileTabChild : IDETabChild
         }
     }
 
+    // 根据选中区域计算行列
     private fun CalcSelectTileRectByPos(IDEUITileLayerInfo layer, double x, double y, double width, double height) : IDETileClipboard, int, int, int, int
     {
         var begin_row, begin_col = ALittle.Tile_CalcRowColByPos(this._user_info.tile_map, x, y);
@@ -171,6 +187,7 @@ public class IDETileTabChild : IDETabChild
         return clipboard, begin_row, begin_col, end_row, end_col;
     }
 
+    // 根据选中行列获取选中的格子
     private fun CalcSelectTileRectByRowCol(IDEUITileLayerInfo layer, int begin_row, int begin_col, int end_row, int end_col) : IDETileClipboard
     {
         var clipboard = new IDETileClipboard();
@@ -206,6 +223,7 @@ public class IDETileTabChild : IDETabChild
         return clipboard;
     }
 
+    // 将选中的格子拷贝到内部剪切板
     private fun HandleSelectCopy()
     {
         var cur_layer = this._layer_edit.GetCurLayerInfo();
@@ -224,6 +242,7 @@ public class IDETileTabChild : IDETabChild
         s_tile_clipboard = clipboard;
     }
 
+    // 将选中的格子剪切
     private fun HandleSelectCut()
     {
         var cur_layer, index = this._layer_edit.GetCurLayerInfo();
@@ -248,6 +267,7 @@ public class IDETileTabChild : IDETabChild
         this.save = false;
     }
 
+    // 黏贴剪切板
     private fun HandleSelectPaste(double rel_x, double rel_y)
     {
         var cur_layer, index = this._layer_edit.GetCurLayerInfo();
@@ -279,8 +299,10 @@ public class IDETileTabChild : IDETabChild
         this.save = false;
     }
 
+    // 鼠标左键按下编辑
     private fun HandleQuadLButtonDown(ALittle.UILButtonDownEvent event)
     {
+        // 处理笔刷
         if (g_IDECenter.center.tile_brush)
         {
             var brush_info = g_IDECenter.center.tile_brush_edit.GetBrush();
@@ -297,12 +319,16 @@ public class IDETileTabChild : IDETabChild
                 return;
             }
 
+            // 获取行列
             var row, col = ALittle.Tile_CalcRowColByPos(this._user_info.tile_map, event.rel_x, event.rel_y);
             if (row <= 0 || col <= 0) return;
+
+            // 对地图大小进行合理扩大
             this.ResizeGridMap(row, col);
             this._drag_cell_row = row;
             this._drag_cell_col = col;
 
+            // 获取cell，没有就构建一个
             var col_map = layer_info._layer.cell_map[row];
             if (col_map == null)
             {
@@ -315,8 +341,10 @@ public class IDETileTabChild : IDETabChild
                 cell = new ALittle.TileCell();
                 col_map[col] = cell;
             }
+            // 获取旧的纹理路径
             var old_tex_path:string;
             if (cell.tex_id != null) old_tex_path = layer_info._user_info.tile_map.tex_map[cell.tex_id];
+            // 获取纹理id，如果没有就构建一个
             var tex_id = layer_info._user_info.tex_id_map[brush_info.tex_path];
             if (tex_id == null)
             {
@@ -325,16 +353,21 @@ public class IDETileTabChild : IDETabChild
                 layer_info._user_info.tex_id_map[brush_info.tex_path] = tex_id;
                 layer_info._user_info.tile_map.tex_map[tex_id] = brush_info.tex_path;
             }
+            // 保存新的纹理id
             cell.tex_id = tex_id;
 
+            // 创建图像
             var image = this.GetImage(layer_index, row, col);
+            // 设置图片
             image.SetTextureCut(brush_info.module_path, 0, 0, true);
 
+            // 创建撤销对象
             var revoke = new IDETileBrushCellRevoke(this, layer_info, cell, image, old_tex_path, brush_info.tex_path);
             this._revoke_list.PushRevoke(revoke);
 
             this.save = false;
         }
+        // 处理橡皮擦
         elseif (g_IDECenter.center.tile_erase)
         {
             var layer_info, layer_index = this._layer_edit.GetCurLayerInfo();
@@ -344,23 +377,33 @@ public class IDETileTabChild : IDETabChild
                 return;
             }
 
+            // 获取行列
             var row, col = ALittle.Tile_CalcRowColByPos(this._user_info.tile_map, event.rel_x, event.rel_y);
             if (row <= 0 || col <= 0) return;
+
+            // 对地图大小进行合理扩大
             this.ResizeGridMap(row, col);
             this._drag_cell_row = row;
             this._drag_cell_col = col;
 
+            // 获取cell
             var col_map = layer_info._layer.cell_map[row];
             if (col_map == null) return;
             var cell = col_map[col];
             if (cell == null) return;
             if (cell.tex_id == null) return;
+
+            // 获取旧的纹理路径
             var old_tex_path = layer_info._user_info.tile_map.tex_map[cell.tex_id];
+            // 把纹理设置为空
             cell.tex_id = null;
 
+            // 创建image
             var image = this.GetImage(layer_index, row, col);
+            // 把图片设置为空
             image.SetTextureCut(null, 0, 0, true);
 
+            // 创建撤销对象
             var revoke = new IDETileBrushCellRevoke(this, layer_info, cell, image, old_tex_path, null);
             this._revoke_list.PushRevoke(revoke);
 
@@ -368,13 +411,17 @@ public class IDETileTabChild : IDETabChild
         }
     }
 
+    // 开始拖拽
     private fun HandleQuadDragBegin(ALittle.UIButtonDragBeginEvent event)
     {
+        // 拖拽工具
         if (g_IDECenter.center.tile_handdrag)
         {
+            // 把事件转发给滚动屏幕
             event.target = this._tab_screen;
             this._tab_screen.DispatchEvent(event);
         }
+        // 选中工具
         elseif (g_IDECenter.center.tile_select)
         {
             this._select_x = event.rel_x;
@@ -388,8 +435,10 @@ public class IDETileTabChild : IDETabChild
         }
     }
 
+    // 处理拖拽
     private fun HandleQuadDrag(ALittle.UIButtonDragEvent event)
     {
+        // 笔刷工具
         if (g_IDECenter.center.tile_brush)
         {
             var brush_info = g_IDECenter.center.tile_brush_edit.GetBrush();
@@ -398,13 +447,18 @@ public class IDETileTabChild : IDETabChild
             var layer_info, layer_index = this._layer_edit.GetCurLayerInfo();
             if (layer_info == null) return;
 
+            // 计算行列
             var row, col = ALittle.Tile_CalcRowColByPos(this._user_info.tile_map, event.rel_x, event.rel_y);
             if (row <= 0 || col <= 0) return;
+
+            // 重置大小
             this.ResizeGridMap(row, col);
+            // 如果和上次的位置一样，那么就直接返回
             if (this._drag_cell_row == row && this._drag_cell_col == col) return;
             this._drag_cell_row = row;
             this._drag_cell_col = col;
             
+            // 获取cell，没有就创建
             var col_map = layer_info._layer.cell_map[row];
             if (col_map == null)
             {
@@ -417,8 +471,11 @@ public class IDETileTabChild : IDETabChild
                 cell = new ALittle.TileCell();
                 col_map[col] = cell;
             }
+
+            // 获取旧的纹理路径
             var old_tex_path:string;
             if (cell.tex_id != null) old_tex_path = layer_info._user_info.tile_map.tex_map[cell.tex_id];
+            // 获取纹理id，没有就创建一个
             var tex_id = layer_info._user_info.tex_id_map[brush_info.tex_path];
             if (tex_id == null)
             {
@@ -427,49 +484,68 @@ public class IDETileTabChild : IDETabChild
                 layer_info._user_info.tex_id_map[brush_info.tex_path] = tex_id;
                 layer_info._user_info.tile_map.tex_map[tex_id] = brush_info.tex_path;
             }
+            // 设置纹理id
             cell.tex_id = tex_id;
 
+            // 获取image
             var image = this.GetImage(layer_index, row, col);
+            // 设置image纹理
             image.SetTextureCut(brush_info.module_path, 0, 0, true);
 
+            // 创建撤销对象
             var revoke = new IDETileBrushCellRevoke(this, layer_info, cell, image, old_tex_path, brush_info.tex_path);
             this._revoke_list.PushRevoke(revoke);
 
             this.save = false;
         }
+        // 处理拖拽
         elseif (g_IDECenter.center.tile_handdrag)
         {
+            // 转发给滚动屏幕
             event.target = this._tab_screen;
             this._tab_screen.DispatchEvent(event);
         }
+        // 处理橡皮擦
         elseif (g_IDECenter.center.tile_erase)
         {
             var layer_info, layer_index = this._layer_edit.GetCurLayerInfo();
             if (layer_info == null) return;
 
+            // 计算行列
             var row, col = ALittle.Tile_CalcRowColByPos(this._user_info.tile_map, event.rel_x, event.rel_y);
             if (row <= 0 || col <= 0) return;
+
+            // 重置大小
             this.ResizeGridMap(row, col);
+            // 如果和上一个位置一样，那么就直接返回
             if (this._drag_cell_row == row && this._drag_cell_col == col) return;
             this._drag_cell_row = row;
             this._drag_cell_col = col;
 
+            // 获取cell，没有就return
             var col_map = layer_info._layer.cell_map[row];
             if (col_map == null) return;
             var cell = col_map[col];
             if (cell == null) return;
             if (cell.tex_id == null) return;
+
+            // 获取旧的纹理路径
             var old_tex_path = layer_info._user_info.tile_map.tex_map[cell.tex_id];
+            // 清空纹理id
             cell.tex_id = null;
 
+            // 获取image
             var image = this.GetImage(layer_index, row, col);
+            // 设置image的纹理为空
             image.SetTextureCut(null, 0, 0, true);
 
+            // 创建撤销对象
             var revoke = new IDETileBrushCellRevoke(this, layer_info, cell, image, old_tex_path, null);
             this._revoke_list.PushRevoke(revoke);
 
             this.save = false;
         }
+        // 处理选中区域
         elseif (g_IDECenter.center.tile_select)
         {
             if (event.rel_x > this._select_x)
@@ -496,6 +572,7 @@ public class IDETileTabChild : IDETabChild
         }
     }
 
+    // 拖拽结束
     private fun HandleQuadDragEnd(ALittle.UIButtonDragEndEvent event)
     {
         if (g_IDECenter.center.tile_brush)
@@ -519,6 +596,7 @@ public class IDETileTabChild : IDETabChild
         this._drag_cell_col = null;
     }
 
+    // 获取层编辑控件
     public get layer_edit() : IDEUITileLayerEdit { return this._layer_edit; }
 
     private fun OnUndo() { }
@@ -545,7 +623,6 @@ public class IDETileTabChild : IDETabChild
     private fun OnOpen()
     {
         this._revoke_list = new ALittle.RevokeList(10000);
-
 		g_IDECenter.center.tile_brush_edit.layer_container.AddChild(this._layer_edit);
     }
 
@@ -563,20 +640,25 @@ public class IDETileTabChild : IDETabChild
         g_IDECenter.center.tile_list.ShowTreeItemFocus(tree);
     }
 
+    // 创建层
     public fun CreateLayer() : ALittle.DisplayGroup, ALittle.Linear, ALittle.Linear
     {
+        // 创建其他组件容器
         var group = new ALittle.DisplayGroup(g_Control);
 
+        // 创建地块奇数行容器
         var linear_1 = new ALittle.Linear(g_Control);
         linear_1.type = ALittle.UIEnumTypes.TYPE_V;
         group.AddChild(linear_1);
 
+        // 创建地块偶数行容器
         var linear_2 = new ALittle.Linear(g_Control);
         linear_2.type = ALittle.UIEnumTypes.TYPE_V;
         linear_2.x = ALittle.Tile_CalcLinear2OffsetX(this._user_info.tile_map);
         linear_2.y = ALittle.Tile_CalcLinear2OffsetY(this._user_info.tile_map);
         group.AddChild(linear_2);
 
+        // 添加到
         this._group_tile.AddChild(group);
 
         var row_count, col_count = this.GetRowColCount();
@@ -584,6 +666,7 @@ public class IDETileTabChild : IDETabChild
         return group, linear_1, linear_2;
     }
 
+    // 计算当前行列
     public fun GetRowColCount() : int, int
     {
         var cur_row_count = 0;
@@ -601,6 +684,7 @@ public class IDETileTabChild : IDETabChild
         return cur_row_count, cur_col_count;
     }
 
+    // 获取层，以及对应的格子行容器
     public fun GetLayer(int index) : ALittle.DisplayGroup, ALittle.Linear, ALittle.Linear
     {
         var group = cast<ALittle.DisplayGroup>(this._group_tile.GetChildByIndex(index));
@@ -610,6 +694,7 @@ public class IDETileTabChild : IDETabChild
         return group, linear_1, linear_2;
     }
 
+    // 获取对应格子的image
     public fun GetImage(int layer, int row, int col) : ALittle.Image
     {
         var group, linear_1, linear_2 = this.GetLayer(layer);
@@ -653,11 +738,13 @@ public class IDETileTabChild : IDETabChild
         }
     }
 
+    // 添加层
     public fun AddLayer(ALittle.DisplayGroup group, int index)
     {
         this._group_tile.AddChild(group, index);
     }
 
+    // 移除层
     public fun RemoveLayer(ALittle.DisplayGroup group)
     {
         this._group_tile.RemoveChild(group);
@@ -668,6 +755,7 @@ public class IDETileTabChild : IDETabChild
         this._group_tile.SetChildIndex(group, index);
     }
 
+    // 标检容器子控件
     public get tab_body() : ALittle.DisplayObject { return this._tab_screen; }
 
     public set save(bool value)
@@ -735,6 +823,7 @@ public class IDETileTabChild : IDETabChild
         this._user_info = info;
     }
 
+    // 根据携带信息，创建内容
     public fun CreateBySelect(IDETileTreeUserInfo info)
     {
         this._user_info = info;
@@ -752,6 +841,7 @@ public class IDETileTabChild : IDETabChild
         var row_count = info.tile_map.row_count;
         if (row_count < 10) row_count = 10;
 
+        // 计算格子的宽高
         var grid_map_width = ALittle.Tile_CalcCellWidth(this._user_info.tile_map) * col_count;
 
         // 初始化格子linear
@@ -763,13 +853,16 @@ public class IDETileTabChild : IDETabChild
         // 创建层
         for (var index, layer in info.tile_map.layer_list)
         {
+            // 地块容器
             var group = new ALittle.DisplayGroup(g_Control);
 
+            // 地块奇数行容器
             var linear_1 = new ALittle.Linear(g_Control);
             linear_1.type = ALittle.UIEnumTypes.TYPE_V;
             linear_1.width = grid_map_width;
             group.AddChild(linear_1);
 
+            // 地块偶数行容器
             var linear_2 = new ALittle.Linear(g_Control);
             linear_2.type = ALittle.UIEnumTypes.TYPE_V;
             linear_2.width = grid_map_width;
@@ -777,6 +870,7 @@ public class IDETileTabChild : IDETabChild
             linear_2.y = ALittle.Tile_CalcLinear2OffsetY(this._user_info.tile_map);
             group.AddChild(linear_2);
 
+            // 添加到tile
             this._group_tile.AddChild(group);
         }
         
@@ -803,11 +897,13 @@ public class IDETileTabChild : IDETabChild
             }
         }
 
+        // 初始化层编辑器
         this._layer_edit.Init(this, this._user_info);
-
+        // 裁剪
         this._tab_screen.RefreshClipDisLine();
     }
 
+    // 扩大或缩小容器
     private fun ResizeLinear(ALittle.Linear linear_1, ALittle.Linear linear_2, int row_count, int col_count, int layer)
     {
         if (this._user_info.tile_map.tile_type == ALittle.TileType.HEX_V)
@@ -925,6 +1021,7 @@ public class IDETileTabChild : IDETabChild
         }
     }
 
+    // 重置格子行列数量
     private fun ResizeGridMap(int row_count, int col_count)
     {
         var cur_row_count = 0;
@@ -958,6 +1055,7 @@ public class IDETileTabChild : IDETabChild
         this._tab_screen.AdjustScrollBar();
     }
 
+    // 创建格子
     private fun CreateGrid() : ALittle.DisplayObject
     {
         var tile_type = this._user_info.tile_map.tile_type;
@@ -999,6 +1097,7 @@ public class IDETileTabChild : IDETabChild
         return null;
     }
 
+    // 创建image
     private fun CreateImage() : ALittle.DisplayObject
     {
         var tile_type = this._user_info.tile_map.tile_type;

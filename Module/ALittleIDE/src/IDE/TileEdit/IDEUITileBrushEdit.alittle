@@ -1,6 +1,7 @@
 
 namespace ALittleIDE;
 
+// 笔刷信息
 protected struct IDEUITileBrushInfo
 {
     ALittle.Image _image;
@@ -9,6 +10,7 @@ protected struct IDEUITileBrushInfo
     string module_path;	// 模块的相对路径
 }
 
+// 层信息
 protected struct IDEUITileLayerInfo
 {
     ALittle.TextRadioButton _button;
@@ -22,6 +24,7 @@ protected struct IDEUITileLayerInfo
     ALittle.Linear _linear_2;
 }
 
+// 笔刷编辑界面
 protected class IDEUITileBrushEdit : ALittle.DisplayLayout
 {
 	private ALittle.ScrollList _brush_list;
@@ -29,31 +32,39 @@ protected class IDEUITileBrushEdit : ALittle.DisplayLayout
 
     public fun TCtor()
     {
+        // 监听功能开启和关闭
         g_IDEProject.AddEventListener(this, this.HandleProjectOpen);
         g_IDEProject.AddEventListener(this, this.HandleProjectClose);
     }
 
+    // 层容器
     public get layer_container() : ALittle.DisplayLayout { return this._layer_container; }
 
+    // 清理笔刷列表
     private fun HandleClearBrushClick(ALittle.UIClickEvent event)
     {
         this._brush_list.RemoveAllChild();
     }
 
+    // 工程打开时，清理笔刷
     private fun HandleProjectOpen(IDEProjectOpenEvent event)
     {
         this._brush_list.RemoveAllChild();
     }
 
+    // 工程关闭后，清理笔刷
     public fun HandleProjectClose(IDEProjectCloseEvent event)
     {
         this._brush_list.RemoveAllChild();
     }
 
+    // 添加笔刷
     public fun AddBrushList(List<string> module_path_list, List<string> tex_path_list, bool ctrl)
     {
+        // 如果没有按住ctrl键，表示要移除当前的
         if (!ctrl) this._brush_list.RemoveAllChild();
 
+        // 创建并添加笔刷
         for (var index, module_path in module_path_list)
         {
             var tex_path = tex_path_list[index];
@@ -67,6 +78,7 @@ protected class IDEUITileBrushEdit : ALittle.DisplayLayout
         }
     }
 
+    //  获取笔刷，如果数量大于1，那么通过随机的方式获得
     public fun GetBrush() : IDEUITileBrushInfo
     {
         var child_count = this._brush_list.child_count;
@@ -78,11 +90,15 @@ protected class IDEUITileBrushEdit : ALittle.DisplayLayout
     }
 }
 
+// 层编辑界面
 protected class IDEUITileLayerEdit : ALittle.DisplayLayout
 {
+    // 层滚动屏
     private ALittle.ScrollList _layer_list;
+    // 单选组
     private ALittle.TextRadioButtonGroup _group = new ALittle.TextRadioButtonGroup();
 
+    // 标签页
     private IDETileTabChild _tab_child;
     private IDETileTreeUserInfo _user_info;
 
@@ -91,11 +107,13 @@ protected class IDEUITileLayerEdit : ALittle.DisplayLayout
         this._tab_child = tab_child;
         this._user_info = user_info;
 
+        // 遍历当前层
         for (var index, layer in user_info.tile_map.layer_list)
         {
             var info = new IDEUITileLayerInfo();
             info._user_info = this._user_info;
 
+            // 创建层ui
             info._item = g_Control.CreateControl{ALittle.DisplayLayout}("ide_tile_layer_item", info);
             info._button.text = layer.name;
             info._button.group = this._group;
@@ -104,10 +122,12 @@ protected class IDEUITileLayerEdit : ALittle.DisplayLayout
             info._item._user_data = info;
             this._layer_list.AddChild(info._item);
 
+            // 保存层相关容器
             info._layer = layer;
             info._group, info._linear_1, info._linear_2 = this._tab_child.GetLayer(index);
         }
 
+        // 如果
         if (this._layer_list.child_count > 0)
         {
             var info = cast<IDEUITileLayerInfo>(this._layer_list.childs[this._layer_list.child_count]._user_data);
