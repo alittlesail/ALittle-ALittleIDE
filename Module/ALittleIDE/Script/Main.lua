@@ -117,7 +117,6 @@ function ALittleIDE.__Module_Setup(layer_group, control, module_base_path, scrip
 		,{"UIEdit/Setting/RichEditS","UIEdit/Setting/DisplayLayoutS"}
 		,{"UIEdit/Setting/RichInputS","UIEdit/Setting/DisplayLayoutS"}
 		,{"UIEdit/Setting/ScrollBarS","UIEdit/Setting/Grid3S"}
-		,{"UIEdit/Setting/ScrollButtonS","UIEdit/Setting/DisplayLayoutS"}
 		,{"UIEdit/Setting/ScrollListS","UIEdit/Setting/DisplayLayoutS"}
 		,{"UIEdit/Setting/ScrollScreenS","UIEdit/Setting/DisplayLayoutS"}
 		,{"UIEdit/Setting/SliderS","UIEdit/Setting/DisplayLayoutS"}

@@ -54,7 +54,6 @@ public class IDEUITreeItem : IDEUITreeLogic
 		name_map["Triangle"] = this._image_icon;
 		
 		name_map["TextButton"] = this._button_icon;
-		name_map["ScrollButton"] = this._button_icon;
 		name_map["SpringTextButton"] = this._button_icon;
 		name_map["Slider"] = this._button_icon;
 

@@ -719,7 +719,7 @@ function ALittleIDE.IDEUITabChild:ShowHandleQuad(target, force_shift)
 		handle_info.target = child
 		self._tab_quad_map[child] = handle_info
 	end
-	local loop = ALittle.LoopFunction(Lua.Bind(self.FocusInHandleQuad, self, target), 1, 0, 1)
+	local loop = ALittle.LoopTimer(Lua.Bind(self.FocusInHandleQuad, self, target), 1)
 	loop:Start()
 end
 
@@ -779,7 +779,7 @@ function ALittleIDE.IDEUITabChild:ShowHandleQuadList(list)
 	if target == nil then
 		return
 	end
-	local loop = ALittle.LoopFunction(Lua.Bind(self.FocusInHandleQuad, self, target), 1, 0, 1)
+	local loop = ALittle.LoopTimer(Lua.Bind(self.FocusInHandleQuad, self, target), 1)
 	loop:Start()
 end
 

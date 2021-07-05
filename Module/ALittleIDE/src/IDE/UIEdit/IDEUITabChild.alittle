@@ -781,7 +781,7 @@ public class IDEUITabChild : IDETabChild
             this._tab_quad_map[child] = handle_info;
         }
 	
-        var loop = new ALittle.LoopFunction(bind(this.FocusInHandleQuad, this, target), 1, 0, 1);
+        var loop = new ALittle.LoopTimer(bind(this.FocusInHandleQuad, this, target), 1);
         loop.Start();
 	}
 
@@ -855,7 +855,7 @@ public class IDEUITabChild : IDETabChild
         }
 	
         if (target == null) return;
-        var loop = new ALittle.LoopFunction(bind(this.FocusInHandleQuad, this, target), 1, 0, 1);
+        var loop = new ALittle.LoopTimer(bind(this.FocusInHandleQuad, this, target), 1);
         loop.Start();
     }
 	

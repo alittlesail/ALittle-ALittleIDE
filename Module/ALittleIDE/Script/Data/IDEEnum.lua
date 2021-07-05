@@ -122,7 +122,7 @@ function ALittleIDE.IDEEnum:Ctor()
 	self.text_edit_display_map["TextRadioButton"] = true
 	self.text_edit_display_map["SpringTextButton"] = true
 	self.text_edit_display_map["SpringNumber"] = true
-	___rawset(self, "child_type_list", {"DisplayLayout", "DisplayView", "Quad", "Image", "Grid9Image", "Sprite", "SpringTextButton", "Text", "TextArea", "TextInput", "TextEdit", "Slider", "Grid3", "Grid9", "Linear", "Tab", "DropDown", "ScrollBar", "ScrollList", "ScrollScreen", "Dialog", "TileTable", "TextCheckButton", "TextRadioButton", "ImageEdit", "ImageInput", "RichArea", "RichInput", "RichEdit", "ImagePlay", "SpritePlay", "SpriteNumber", "TextButton", "ScrollButton", "Triangle", "VertexImage", "Piechart", "FramePlay"})
+	___rawset(self, "child_type_list", {"DisplayLayout", "DisplayView", "Quad", "Image", "Grid9Image", "Sprite", "SpringTextButton", "Text", "TextArea", "TextInput", "TextEdit", "Slider", "Grid3", "Grid9", "Linear", "Tab", "DropDown", "ScrollBar", "ScrollList", "ScrollScreen", "Dialog", "TileTable", "TextCheckButton", "TextRadioButton", "ImageEdit", "ImageInput", "RichArea", "RichInput", "RichEdit", "ImagePlay", "SpritePlay", "SpriteNumber", "TextButton", "Triangle", "VertexImage", "Piechart", "FramePlay"})
 	___rawset(self, "type_default_map", {})
 	for k, v in ___ipairs(self.child_type_list) do
 		local clazz = ALittle[v]
@@ -168,7 +168,6 @@ function ALittleIDE.IDEEnum:Ctor()
 	___rawset(self, "nature_show_map", {})
 	self.nature_show_map["TextButton"] = {"show_text", "show_up", "show_down", "show_over", "show_disabled", "show_down_text", "show_over_text", "show_disabled_text"}
 	self.nature_show_map["SpringTextButton"] = {"show_text", "show_up", "show_disabled", "show_disabled_text"}
-	self.nature_show_map["ScrollButton"] = {"show_text", "show_up", "show_down", "show_over", "show_disabled", "show_down_text", "show_over_text", "show_disabled_text"}
 	self.nature_show_map["Tab"] = {"show_head_background"}
 	self.nature_show_map["DropDown"] = {"show_text", "show_up", "show_down", "show_over", "show_disabled", "show_selected_up", "show_selected_down", "show_selected_over", "show_selected_disabled", "show_over_text", "show_down_text", "show_disabled_text", "show_selected_text", "show_selected_over_text", "show_selected_down_text", "show_selected_disabled_text", "show_background", "show_scrollbar"}
 	self.nature_show_map["ScrollBar"] = {"up_button", "down_button", "bar_button", "bar_background"}

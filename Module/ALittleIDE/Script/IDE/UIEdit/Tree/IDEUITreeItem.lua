@@ -92,7 +92,6 @@ function ALittleIDE.IDEUITreeItem:Ctor(ctrl_sys, user_info, tab_child)
 	name_map["Piechart"] = self._image_icon
 	name_map["Triangle"] = self._image_icon
 	name_map["TextButton"] = self._button_icon
-	name_map["ScrollButton"] = self._button_icon
 	name_map["SpringTextButton"] = self._button_icon
 	name_map["Slider"] = self._button_icon
 	name_map["TextCheckButton"] = self._check_icon
