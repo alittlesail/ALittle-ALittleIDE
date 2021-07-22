@@ -108,6 +108,10 @@ ALittleIDE.IDEUITree = JavaScript.Class(ALittleIDE.IDEUITreeLogic, {
 			title = title + this._user_info.base.text;
 		} else if (this._user_info.default.text !== undefined) {
 			title = title + this._user_info.default.text;
+		} else if (this._user_info.base.texture_name !== undefined) {
+			title = title + ALittle.File_GetFileNameByPath(this._user_info.base.texture_name);
+		} else if (this._user_info.default.texture_name !== undefined) {
+			title = title + ALittle.File_GetFileNameByPath(this._user_info.default.texture_name);
 		}
 		this._item_button.text = title;
 		if (this._user_info.child_type === undefined) {

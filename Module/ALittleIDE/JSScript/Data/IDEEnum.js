@@ -114,7 +114,7 @@ ALittleIDE.IDEEnum = JavaScript.Class(undefined, {
 		this.text_edit_display_map["TextRadioButton"] = true;
 		this.text_edit_display_map["SpringTextButton"] = true;
 		this.text_edit_display_map["SpringNumber"] = true;
-		this.child_type_list = ["DisplayLayout", "DisplayView", "Quad", "Image", "Grid9Image", "Sprite", "SpringTextButton", "Text", "TextArea", "TextInput", "TextEdit", "Slider", "Grid3", "Grid9", "Linear", "Tab", "DropDown", "ScrollBar", "ScrollList", "ScrollScreen", "Dialog", "TileTable", "TextCheckButton", "TextRadioButton", "ImageEdit", "ImageInput", "RichArea", "RichInput", "RichEdit", "ImagePlay", "SpritePlay", "SpriteNumber", "TextButton", "ScrollButton", "Triangle", "VertexImage", "Piechart", "FramePlay"];
+		this.child_type_list = ["DisplayLayout", "DisplayView", "Quad", "Image", "Grid9Image", "Sprite", "SpringTextButton", "Text", "TextArea", "TextInput", "TextEdit", "Slider", "Grid3", "Grid9", "Linear", "Tab", "DropDown", "ScrollBar", "ScrollList", "ScrollScreen", "Dialog", "TileTable", "TextCheckButton", "TextRadioButton", "ImageEdit", "ImageInput", "RichArea", "RichInput", "RichEdit", "ImagePlay", "SpritePlay", "SpriteNumber", "TextButton", "Triangle", "VertexImage", "Piechart", "FramePlay"];
 		this.type_default_map = {};
 		let ___OBJECT_1 = this.child_type_list;
 		for (let k = 1; k <= ___OBJECT_1.length; ++k) {
@@ -172,7 +172,6 @@ ALittleIDE.IDEEnum = JavaScript.Class(undefined, {
 		this.nature_show_map = {};
 		this.nature_show_map["TextButton"] = ["show_text", "show_up", "show_down", "show_over", "show_disabled", "show_down_text", "show_over_text", "show_disabled_text"];
 		this.nature_show_map["SpringTextButton"] = ["show_text", "show_up", "show_disabled", "show_disabled_text"];
-		this.nature_show_map["ScrollButton"] = ["show_text", "show_up", "show_down", "show_over", "show_disabled", "show_down_text", "show_over_text", "show_disabled_text"];
 		this.nature_show_map["Tab"] = ["show_head_background"];
 		this.nature_show_map["DropDown"] = ["show_text", "show_up", "show_down", "show_over", "show_disabled", "show_selected_up", "show_selected_down", "show_selected_over", "show_selected_disabled", "show_over_text", "show_down_text", "show_disabled_text", "show_selected_text", "show_selected_over_text", "show_selected_down_text", "show_selected_disabled_text", "show_background", "show_scrollbar"];
 		this.nature_show_map["ScrollBar"] = ["up_button", "down_button", "bar_button", "bar_background"];

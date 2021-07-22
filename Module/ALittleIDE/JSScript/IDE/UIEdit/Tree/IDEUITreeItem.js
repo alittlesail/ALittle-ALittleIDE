@@ -84,7 +84,6 @@ ALittleIDE.IDEUITreeItem = JavaScript.Class(ALittleIDE.IDEUITreeLogic, {
 		name_map["Piechart"] = this._image_icon;
 		name_map["Triangle"] = this._image_icon;
 		name_map["TextButton"] = this._button_icon;
-		name_map["ScrollButton"] = this._button_icon;
 		name_map["SpringTextButton"] = this._button_icon;
 		name_map["Slider"] = this._button_icon;
 		name_map["TextCheckButton"] = this._check_icon;
@@ -123,6 +122,10 @@ ALittleIDE.IDEUITreeItem = JavaScript.Class(ALittleIDE.IDEUITreeLogic, {
 			title = title + this._user_info.base.text;
 		} else if (this._user_info.default.text !== undefined) {
 			title = title + this._user_info.default.text;
+		} else if (this._user_info.base.texture_name !== undefined) {
+			title = title + ALittle.File_GetFileNameByPath(this._user_info.base.texture_name);
+		} else if (this._user_info.default.texture_name !== undefined) {
+			title = title + ALittle.File_GetFileNameByPath(this._user_info.default.texture_name);
 		}
 		this._item_button.text = title;
 		if (this._user_info.child_type === undefined) {

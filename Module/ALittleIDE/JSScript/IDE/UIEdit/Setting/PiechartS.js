@@ -15,6 +15,7 @@ ALittleIDE.PiechartS = JavaScript.Class(ALittleIDE.DisplayLayoutS, {
 	},
 	HandleImageTextureNameFOCUSOUT : function(event) {
 		this.DefaultNilStringInputChange("texture_name", false);
+		this._tree_logic.UpdateDesc();
 	},
 	HandleImageTextureNameSelect : async function(event) {
 		let ui_manager = ALittleIDE.g_IDEProject.GetUIManager(this._tree_logic.user_info.module);
