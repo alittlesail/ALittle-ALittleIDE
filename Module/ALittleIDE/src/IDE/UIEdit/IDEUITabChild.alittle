@@ -795,7 +795,7 @@ public class IDEUITabChild : IDETabChild
         {
             target = child;
             var control_line = new IDEUITabChildControlLine();
-            var handle_quad = g_Control.CreateControl{ALittle.DisplayObject}("ide_common_handle_quad", control_line);
+            var handle_quad = g_Control.CreateControl{ALittle.DisplayObject}("aui_handle_quad", control_line);
             control_line.quad.AddEventListener(this, this.HandleHandleQuadLButtonUp);
             control_line.quad.AddEventListener(this, this.HandleHandleQuadLButtonDown);
             control_line.quad.AddEventListener(this, this.HandleHandleQuadDragBegin);
