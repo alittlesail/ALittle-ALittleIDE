@@ -13,6 +13,7 @@ ALittleIDE.Grid9ImageS = JavaScript.Class(ALittleIDE.Grid9S, {
 	},
 	HandleImageTextureNameFOCUSOUT : function(event) {
 		this.DefaultNilStringInputChange("texture_name", false);
+		this._tree_logic.UpdateDesc();
 		this.HandleAutoCut(event);
 	},
 	HandleImageTextureNameSelect : async function(event) {

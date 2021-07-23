@@ -150,7 +150,7 @@ ALittleIDE.IDEUIUtility_NewGiveBaseCase = function(info, object) {
 		if (info.__class === "Text") {
 			info.text = "123456789";
 			object.text = "123456789";
-			object.RejuseSize();
+			object.AdjustSize();
 		} else {
 			info.width_type = 4;
 			object.width_type = 4;

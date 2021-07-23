@@ -307,7 +307,7 @@ ALittleIDE.IDEProject = JavaScript.Class(ALittle.EventDispatcher, {
 			this._debug_loop = ALittle.NewObject(ALittle.LoopFrame, this.HandleDebugFrame.bind(this));
 		}
 		this._debug_loop.Start();
-		let break_map = this._project.config.GetConfig("break_points", undefined);
+		let break_map = this._project.config.GetConfig("break_points", {});
 		let ___OBJECT_2 = break_map;
 		for (let file_path in ___OBJECT_2) {
 			let lines = ___OBJECT_2[file_path];

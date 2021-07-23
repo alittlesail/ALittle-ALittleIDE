@@ -696,7 +696,7 @@ ALittleIDE.IDEUITabChild = JavaScript.Class(ALittleIDE.IDETabChild, {
 			handle_info.target = child;
 			this._tab_quad_map.set(child, handle_info);
 		}
-		let loop = ALittle.NewObject(ALittle.LoopFunction, this.FocusInHandleQuad.bind(this, target), 1, 0, 1);
+		let loop = ALittle.NewObject(ALittle.LoopTimer, this.FocusInHandleQuad.bind(this, target), 1);
 		loop.Start();
 	},
 	ShowHandleQuadList : function(list) {
@@ -709,7 +709,7 @@ ALittleIDE.IDEUITabChild = JavaScript.Class(ALittleIDE.IDETabChild, {
 			if (child === undefined) break;
 			target = child;
 			let control_line = {};
-			let handle_quad = ALittleIDE.g_Control.CreateControl("ide_common_handle_quad", control_line);
+			let handle_quad = ALittleIDE.g_Control.CreateControl("aui_handle_quad", control_line);
 			control_line.quad.AddEventListener(___all_struct.get(40651933), this, this.HandleHandleQuadLButtonUp);
 			control_line.quad.AddEventListener(___all_struct.get(1883782801), this, this.HandleHandleQuadLButtonDown);
 			control_line.quad.AddEventListener(___all_struct.get(1301789264), this, this.HandleHandleQuadDragBegin);
@@ -758,7 +758,7 @@ ALittleIDE.IDEUITabChild = JavaScript.Class(ALittleIDE.IDETabChild, {
 		if (target === undefined) {
 			return;
 		}
-		let loop = ALittle.NewObject(ALittle.LoopFunction, this.FocusInHandleQuad.bind(this, target), 1, 0, 1);
+		let loop = ALittle.NewObject(ALittle.LoopTimer, this.FocusInHandleQuad.bind(this, target), 1);
 		loop.Start();
 	},
 	HideHandleQuad : function(target, shift) {

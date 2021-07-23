@@ -17,7 +17,7 @@ option_map : {}
 
 if (AUIPlugin.AUIFileSelectDialog === undefined) throw new Error(" extends class:AUIPlugin.AUIFileSelectDialog is undefined");
 ALittleIDE.IDEImageSelectDialog = JavaScript.Class(AUIPlugin.AUIFileSelectDialog, {
-	Ctor : function(title, layer, ext_list) {
+	Setup : function() {
 		ALittleIDE.g_IDEProject.AddEventListener(___all_struct.get(-332308624), this, this.HandleCloseProject);
 		this.AddEventListener(___all_struct.get(1821709712), this, this.HandleImageSelectRButtonDown);
 	},

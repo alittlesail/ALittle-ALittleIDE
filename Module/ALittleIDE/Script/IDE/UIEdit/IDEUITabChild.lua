@@ -730,7 +730,7 @@ function ALittleIDE.IDEUITabChild:ShowHandleQuadList(list)
 	for index, child in ___ipairs(list) do
 		target = child
 		local control_line = {}
-		local handle_quad = ALittleIDE.g_Control:CreateControl("ide_common_handle_quad", control_line)
+		local handle_quad = ALittleIDE.g_Control:CreateControl("aui_handle_quad", control_line)
 		control_line.quad:AddEventListener(___all_struct[40651933], self, self.HandleHandleQuadLButtonUp)
 		control_line.quad:AddEventListener(___all_struct[1883782801], self, self.HandleHandleQuadLButtonDown)
 		control_line.quad:AddEventListener(___all_struct[1301789264], self, self.HandleHandleQuadDragBegin)

@@ -71,6 +71,7 @@ ALittleIDE.IDEUIMainMenu = JavaScript.Class(ALittle.Linear, {
 			ALittle.List_Push(file_list, base_path + "Core/Coroutine.js");
 			ALittle.List_Push(file_list, base_path + "Core/Net.js");
 			ALittle.List_Push(file_list, base_path + "Core/Worker.js");
+			ALittle.List_Push(file_list, base_path + "Core/Require.js");
 			let ___OBJECT_2 = file_list;
 			for (let index = 1; index <= ___OBJECT_2.length; ++index) {
 				let path = ___OBJECT_2[index - 1];
@@ -104,6 +105,7 @@ ALittleIDE.IDEUIMainMenu = JavaScript.Class(ALittle.Linear, {
 			ALittle.List_Push(file_list, base_path + "Core/Coroutine.lua");
 			ALittle.List_Push(file_list, base_path + "Core/Net.lua");
 			ALittle.List_Push(file_list, base_path + "Core/Worker.lua");
+			ALittle.List_Push(file_list, base_path + "Core/Require.lua");
 			let ___OBJECT_3 = file_list;
 			for (let index = 1; index <= ___OBJECT_3.length; ++index) {
 				let path = ___OBJECT_3[index - 1];
@@ -134,7 +136,7 @@ ALittleIDE.IDEUIMainMenu = JavaScript.Class(ALittle.Linear, {
 			ALittle.List_Push(file_list, base_path + "Loop/LoopObject.js");
 			ALittle.List_Push(file_list, base_path + "Loop/ILoopSystem.js");
 			ALittle.List_Push(file_list, base_path + "Loop/LoopFrame.js");
-			ALittle.List_Push(file_list, base_path + "Loop/LoopFunction.js");
+			ALittle.List_Push(file_list, base_path + "Loop/LoopRepeat.js");
 			ALittle.List_Push(file_list, base_path + "Loop/LoopGroup.js");
 			ALittle.List_Push(file_list, base_path + "Loop/LoopList.js");
 			ALittle.List_Push(file_list, base_path + "Loop/LoopTimer.js");
@@ -195,7 +197,7 @@ ALittleIDE.IDEUIMainMenu = JavaScript.Class(ALittle.Linear, {
 			ALittle.List_Push(file_list, base_path + "Loop/LoopObject.lua");
 			ALittle.List_Push(file_list, base_path + "Loop/ILoopSystem.lua");
 			ALittle.List_Push(file_list, base_path + "Loop/LoopFrame.lua");
-			ALittle.List_Push(file_list, base_path + "Loop/LoopFunction.lua");
+			ALittle.List_Push(file_list, base_path + "Loop/LoopRepeat.lua");
 			ALittle.List_Push(file_list, base_path + "Loop/LoopGroup.lua");
 			ALittle.List_Push(file_list, base_path + "Loop/LoopList.lua");
 			ALittle.List_Push(file_list, base_path + "Loop/LoopTimer.lua");
@@ -303,7 +305,6 @@ ALittleIDE.IDEUIMainMenu = JavaScript.Class(ALittle.Linear, {
 		ALittle.List_Push(file_list, base_path + "CEngine/UISystem/Complex/RichEdit.js");
 		ALittle.List_Push(file_list, base_path + "CEngine/UISystem/Complex/RichInput.js");
 		ALittle.List_Push(file_list, base_path + "CEngine/UISystem/Complex/ScrollList.js");
-		ALittle.List_Push(file_list, base_path + "CEngine/UISystem/Complex/ScrollButton.js");
 		ALittle.List_PushList(file_list, ALittle.File_GetFileListByDir(base_path + "CEngine/UISystem/Special/"));
 		ALittle.List_PushList(file_list, ALittle.File_GetFileListByDir(base_path + "CEngine/UISystem/Plugin/"));
 		ALittle.List_PushList(file_list, ALittle.File_GetFileListByDir(base_path + "CEngine/UISystem/Effect/"));
