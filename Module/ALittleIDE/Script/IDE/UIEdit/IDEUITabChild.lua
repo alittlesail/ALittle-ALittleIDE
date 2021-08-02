@@ -858,7 +858,11 @@ function ALittleIDE.IDEUITabChild:HandleHandleContainerDragBegin(event)
 	end
 	self._container_drag_x = event.rel_x
 	self._container_drag_y = event.rel_y
-	self._container_drag_parent = target.logic_parent
+	if target.is_root then
+		self._container_drag_parent = target
+	else
+		self._container_drag_parent = target.logic_parent
+	end
 	self._tab_select_rect.visible = true
 	self._tab_select_rect.x = self._container_drag_x
 	self._tab_select_rect.y = self._container_drag_y
@@ -893,7 +897,10 @@ function ALittleIDE.IDEUITabChild:HandleHandleContainerDragEnd(event)
 	if self._container_drag_parent == nil then
 		return
 	end
-	local rel_x, rel_y = self._container_drag_parent.user_info.object:LocalToGlobal(self._edit_screen)
+	if self._container_drag_parent.user_info == nil then
+		return
+	end
+	local rel_x, rel_y = self._container_drag_parent.user_info.object:LocalToGlobal(self._tab_object_container)
 	local offset_x, offset_y = self._container_drag_parent.user_info.object:GetChildOffset()
 	rel_x = rel_x + (offset_x)
 	rel_y = rel_y + (offset_y)
@@ -903,16 +910,16 @@ function ALittleIDE.IDEUITabChild:HandleHandleContainerDragEnd(event)
 		min_x = event.rel_x
 		max_x = self._container_drag_x
 	end
-	min_x = min_x - (rel_x)
-	max_x = max_x - (rel_x)
+	min_x = min_x + (rel_x)
+	max_x = max_x + (rel_x)
 	local min_y = self._container_drag_y
 	local max_y = event.rel_y
 	if self._container_drag_y > event.rel_y then
 		min_y = event.rel_y
 		max_y = self._container_drag_y
 	end
-	min_y = min_y - (rel_y)
-	max_y = max_y - (rel_y)
+	min_y = min_y + (rel_y)
+	max_y = max_y + (rel_y)
 	local list = {}
 	for index, tree_logic in ___ipairs(self._container_drag_parent.childs) do
 		if tree_logic:SelectPickRange(min_x, min_y, max_x, max_y) then
