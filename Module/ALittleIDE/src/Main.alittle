@@ -57,7 +57,7 @@ public async static __Module_Setup(ALittle.DisplayLayout layer_group, ALittle.Co
 
 	// 加载UI插件
     g_AUIPluinControl = A_ModuleSystem.LoadPlugin("AUIPlugin");
-    
+
     // 获取配置信息
 	g_IDEConfig = ALittle.CreateConfigSystem("ALittleIDE.cfg");
 	// 获取配置信息
