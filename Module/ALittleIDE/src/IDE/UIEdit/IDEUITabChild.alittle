@@ -936,7 +936,10 @@ public class IDEUITabChild : IDETabChild
         this._container_drag_x = event.rel_x;
         this._container_drag_y = event.rel_y;
         
-        this._container_drag_parent = cast<IDEUITree>(target.logic_parent);
+        if (target.is_root)
+        	this._container_drag_parent = cast<IDEUITree>(target);
+        else
+	        this._container_drag_parent = cast<IDEUITree>(target.logic_parent);
 
         this._tab_select_rect.visible = true;
         this._tab_select_rect.x = this._container_drag_x;
@@ -976,8 +979,9 @@ public class IDEUITabChild : IDETabChild
         this._tab_select_rect.visible = false;
         // 遍历判断
         if (this._container_drag_parent == null) return;
-        var rel_x, rel_y = this._container_drag_parent.user_info.object.LocalToGlobal(this._edit_screen);
-
+        if (this._container_drag_parent.user_info == null) return;
+        var rel_x, rel_y = this._container_drag_parent.user_info.object.LocalToGlobal(this._tab_object_container);
+        
 		var offset_x, offset_y = this._container_drag_parent.user_info.object.GetChildOffset();
         rel_x += offset_x;
         rel_y += offset_y;
@@ -989,8 +993,8 @@ public class IDEUITabChild : IDETabChild
             min_x = event.rel_x;
             max_x = this._container_drag_x;
         }
-        min_x -= rel_x;
-        max_x -= rel_x;
+        min_x += rel_x;
+        max_x += rel_x;
         
         var min_y = this._container_drag_y;
         var max_y = event.rel_y;
@@ -999,8 +1003,8 @@ public class IDEUITabChild : IDETabChild
             min_y = event.rel_y;
             max_y = this._container_drag_y;
         }
-        min_y -= rel_y;
-        max_y -= rel_y;
+        min_y += rel_y;
+        max_y += rel_y;
 
         var list = new List<IDEUITreeLogic>();
         for (var index, tree_logic in this._container_drag_parent.childs)

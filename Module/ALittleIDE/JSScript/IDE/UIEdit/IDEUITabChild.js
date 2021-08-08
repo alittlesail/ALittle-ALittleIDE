@@ -831,7 +831,11 @@ ALittleIDE.IDEUITabChild = JavaScript.Class(ALittleIDE.IDETabChild, {
 		}
 		this._container_drag_x = event.rel_x;
 		this._container_drag_y = event.rel_y;
-		this._container_drag_parent = target.logic_parent;
+		if (target.is_root) {
+			this._container_drag_parent = target;
+		} else {
+			this._container_drag_parent = target.logic_parent;
+		}
 		this._tab_select_rect.visible = true;
 		this._tab_select_rect.x = this._container_drag_x;
 		this._tab_select_rect.y = this._container_drag_y;
@@ -864,7 +868,10 @@ ALittleIDE.IDEUITabChild = JavaScript.Class(ALittleIDE.IDETabChild, {
 		if (this._container_drag_parent === undefined) {
 			return;
 		}
-		let [rel_x, rel_y] = this._container_drag_parent.user_info.object.LocalToGlobal(this._edit_screen);
+		if (this._container_drag_parent.user_info === undefined) {
+			return;
+		}
+		let [rel_x, rel_y] = this._container_drag_parent.user_info.object.LocalToGlobal(this._tab_object_container);
 		let [offset_x, offset_y] = this._container_drag_parent.user_info.object.GetChildOffset();
 		rel_x = rel_x + (offset_x);
 		rel_y = rel_y + (offset_y);
@@ -874,16 +881,16 @@ ALittleIDE.IDEUITabChild = JavaScript.Class(ALittleIDE.IDETabChild, {
 			min_x = event.rel_x;
 			max_x = this._container_drag_x;
 		}
-		min_x = min_x - (rel_x);
-		max_x = max_x - (rel_x);
+		min_x = min_x + (rel_x);
+		max_x = max_x + (rel_x);
 		let min_y = this._container_drag_y;
 		let max_y = event.rel_y;
 		if (this._container_drag_y > event.rel_y) {
 			min_y = event.rel_y;
 			max_y = this._container_drag_y;
 		}
-		min_y = min_y - (rel_y);
-		max_y = max_y - (rel_y);
+		min_y = min_y + (rel_y);
+		max_y = max_y + (rel_y);
 		let list = [];
 		let ___OBJECT_4 = this._container_drag_parent.childs;
 		for (let index = 1; index <= ___OBJECT_4.length; ++index) {

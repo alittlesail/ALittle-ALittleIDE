@@ -39,6 +39,7 @@ function ALittleIDE.__Module_Setup(layer_group, control, module_base_path, scrip
 	ALittleIDE.g_ModuleBasePath = module_base_path
 	ALittleIDE.g_ModuleBasePathEx = ALittle.File_BaseFilePath() .. module_base_path
 	ALittleIDE.g_ScriptBasePath = script_base_path
+	ALittle.DeleteLog(1)
 	ALittleIDE.g_AUIPluinControl = A_ModuleSystem:LoadPlugin("AUIPlugin")
 	ALittleIDE.g_IDEConfig = ALittle.CreateConfigSystem("ALittleIDE.cfg")
 	ALittleIDE.g_IDEServerConfig = ALittle.CreateConfigSystem(ALittleIDE.g_ModuleBasePath .. "/Other/Server.cfg")
