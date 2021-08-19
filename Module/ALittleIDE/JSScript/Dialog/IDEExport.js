@@ -167,7 +167,7 @@ ALittleIDE.IDEExport = JavaScript.Class(undefined, {
 			ext = ALittle.String_Upper(ext);
 			let file = ALittle.NewObject(carp.CarpLocalFile);
 			file.SetPath(file_path);
-			JavaScript.Assert(file.Load(false), "IDEExport:PackagePath, 文件加载失败:" + file_path);
+			JavaScript.Assert(file.Load(), "IDEExport:PackagePath, 文件加载失败:" + file_path);
 			if (crypt_mode) {
 				file.Encrypt(undefined);
 			}
@@ -360,7 +360,7 @@ ALittleIDE.IDEExport = JavaScript.Class(undefined, {
 	HandleAskNewUpdateTimeIndexImpl : function(package_info, is_login, update_time, update_index) {
 		return new Promise((async function(___COROUTINE, ___) {
 			if (is_login) {
-				g_AUITool.ShowAlertDialog("提示", "正在请求CurVersion.db的文件的位置");
+				g_AUITool.ShowAlertDialog("提示", "正在请求CurVersionPackage.db的文件的位置");
 				let param = {};
 				param.__account_id = ALittleIDE.g_IDEWebLoginManager.account_id;
 				param.__session_id = ALittleIDE.g_IDEWebLoginManager.session_id;
@@ -379,7 +379,7 @@ ALittleIDE.IDEExport = JavaScript.Class(undefined, {
 		return new Promise((async function(___COROUTINE, ___) {
 			g_AUITool.HideAlertDialog();
 			if (error !== undefined) {
-				g_AUITool.ShowNotice("错误", "CurVersion.db的文件的位置获取失败:" + error);
+				g_AUITool.ShowNotice("错误", "CurVersionPackage.db的文件的位置获取失败:" + error);
 				___COROUTINE(); return;
 			}
 			if (result.version_info === undefined || result.version_info.version_id === undefined || result.version_info.version_id === "") {
@@ -391,7 +391,7 @@ ALittleIDE.IDEExport = JavaScript.Class(undefined, {
 				let param = {};
 				param.platform = package_info.platform;
 				param.version_id = result.version_info.version_id;
-				param.file_path = "CurVersion.db";
+				param.file_path = "CurVersionPackage.db";
 				let client = ALittle.CreateHttpFileSender(result.http_ip, result.http_port, target_path, 0);
 				[error] = await ALittle.IHttpFileSender.InvokeDownload("VersionServer.QDownloadVersionFile", client, param);
 				this.HandleDownloadCurVersion(error, package_info, is_login, update_time, update_index);
@@ -420,14 +420,14 @@ ALittleIDE.IDEExport = JavaScript.Class(undefined, {
 			let db_version_path = package_info.project_path + "/Export/CurVersionOld_" + package_info.platform + ".db";
 			let sqlite = lua.sqlite3.open(db_version_path);
 			if (sqlite === undefined) {
-				g_AUITool.ShowNotice("错误", "CurVersion.db文件打开失败");
+				g_AUITool.ShowNotice("错误", "CurVersionPackage.db文件打开失败");
 				return;
 			}
 			version_info = {};
 			let stmt = sqlite.prepare("SELECT * FROM BigVersion");
 			if (stmt === undefined) {
 				sqlite.close();
-				g_AUITool.ShowNotice("错误", "CurVersion.db中BigVersion读取失败");
+				g_AUITool.ShowNotice("错误", "CurVersionPackage.db中BigVersion读取失败");
 				return;
 			}
 			for (let row of stmt.nrows()) {
@@ -437,7 +437,7 @@ ALittleIDE.IDEExport = JavaScript.Class(undefined, {
 			stmt = sqlite.prepare("SELECT * FROM SmallVersion");
 			if (stmt === undefined) {
 				sqlite.close();
-				g_AUITool.ShowNotice("错误", "CurVersion.db中SmallVersion读取失败");
+				g_AUITool.ShowNotice("错误", "CurVersionPackage.db中SmallVersion读取失败");
 				return;
 			}
 			version_info.small_version = {};
@@ -477,11 +477,11 @@ ALittleIDE.IDEExport = JavaScript.Class(undefined, {
 		let submit_info = {};
 		submit_info.upload_list = [];
 		let update_list_count = 0;
-		g_AUITool.ShowAlertDialog("提示", "生成新的CurVersion.db");
+		g_AUITool.ShowAlertDialog("提示", "生成新的CurVersionPackage.db");
 		ALittle.System_Render();
 		let package_notice = "";
-		ALittle.File_DeleteFile(package_info.export_module_path + "/CurVersion.db");
-		let sqlite = lua.sqlite3.open(package_info.export_module_path + "/CurVersion.db");
+		ALittle.File_DeleteFile(package_info.export_module_path + "/CurVersionPackage.db");
+		let sqlite = lua.sqlite3.open(package_info.export_module_path + "/CurVersionPackage.db");
 		if (sqlite !== undefined) {
 			let sql = "CREATE TABLE IF NOT EXISTS [BigVersion] (";
 			sql = sql + "[c_big_version] [nvarchar](255) NOT NULL default '',";
@@ -591,7 +591,7 @@ ALittleIDE.IDEExport = JavaScript.Class(undefined, {
 			}
 			sqlite.exec("VACUUM;");
 			sqlite.close();
-			ALittle.File_CopyFile(package_info.export_module_path + "/CurVersion.db", package_info.export_module_path + "/CurVersionNoDelete.db");
+			ALittle.File_CopyFile(package_info.export_module_path + "/CurVersionPackage.db", package_info.export_module_path + "/CurVersionNoDelete.db");
 			let sqlite_no_delete = lua.sqlite3.open(package_info.export_module_path + "/CurVersionNoDelete.db");
 			if (sqlite_no_delete === undefined) {
 				g_AUITool.ShowNotice("错误", "CurVersionNoDelete.db文件生成失败:" + package_info.export_module_path + "/CurVersionNoDelete.db");
@@ -602,7 +602,7 @@ ALittleIDE.IDEExport = JavaScript.Class(undefined, {
 			sqlite_no_delete.exec("UPDATE BigVersion SET c_db_version='" + db_version + "'");
 			sqlite_no_delete.exec("VACUUM;");
 			sqlite_no_delete.close();
-			let sqlite_attr = ALittle.File_GetFileAttr(package_info.export_module_path + "/CurVersion.db");
+			let sqlite_attr = ALittle.File_GetFileAttr(package_info.export_module_path + "/CurVersionPackage.db");
 			let sqlite_no_delete_attr = ALittle.File_GetFileAttr(package_info.export_module_path + "/CurVersionNoDelete.db");
 			package_notice = "\n文件添加数量:" + add_count + "\n文件删除数量:" + delete_count + "\n文件修改数量:" + change_count + "\n原始DB文件大小:" + sqlite_attr.size + "\n优化DB文件大小:" + sqlite_no_delete_attr.size;
 			let need_use_no_delete = false;
@@ -617,8 +617,8 @@ ALittleIDE.IDEExport = JavaScript.Class(undefined, {
 				}
 			}
 			if (need_use_no_delete) {
-				ALittle.File_DeleteFile(package_info.export_module_path + "/CurVersion.db");
-				ALittle.File_RenameFile(package_info.export_module_path + "/CurVersionNodelete.db", package_info.export_module_path + "/CurVersion.db");
+				ALittle.File_DeleteFile(package_info.export_module_path + "/CurVersionPackage.db");
+				ALittle.File_RenameFile(package_info.export_module_path + "/CurVersionNodelete.db", package_info.export_module_path + "/CurVersionPackage.db");
 			} else {
 				ALittle.File_DeleteFile(package_info.export_module_path + "/CurVersionNodelete.db");
 			}
@@ -628,7 +628,7 @@ ALittleIDE.IDEExport = JavaScript.Class(undefined, {
 				return;
 			}
 		} else {
-			g_AUITool.ShowNotice("错误", "CurVersion.db文件生成失败:" + package_info.export_module_path + "/CurVersion.db");
+			g_AUITool.ShowNotice("错误", "CurVersionPackage.db文件生成失败:" + package_info.export_module_path + "/CurVersionPackage.db");
 			return;
 		}
 		g_AUITool.ShowAlertDialog("提示", "开始打包安装包");
@@ -810,14 +810,14 @@ ALittleIDE.IDEExport = JavaScript.Class(undefined, {
 			}
 			{
 				++ upload_index;
-				this._submit_content.text = "正在上传:" + upload_index + "/" + total_count + "\n" + submit_info.export_module_path + "/CurVersion.db";
-				param.file_path = "CurVersion.db";
+				this._submit_content.text = "正在上传:" + upload_index + "/" + total_count + "\n" + submit_info.export_module_path + "/CurVersionPackage.db";
+				param.file_path = "CurVersionPackage.db";
 				param.__account_id = ALittleIDE.g_IDEWebLoginManager.account_id;
 				param.__session_id = ALittleIDE.g_IDEWebLoginManager.session_id;
 				let repeat_count = 0;
 				while (repeat_count < 100) {
 					++ repeat_count;
-					this._submit_client = ALittle.CreateHttpFileSender(ALittleIDE.g_IDEWebLoginManager.http_ip, ALittleIDE.g_IDEWebLoginManager.http_port, submit_info.export_module_path + "/CurVersion.db", 0, this.HandleSubmitVersionUpload.bind(this, upload_index, total_count));
+					this._submit_client = ALittle.CreateHttpFileSender(ALittleIDE.g_IDEWebLoginManager.http_ip, ALittleIDE.g_IDEWebLoginManager.http_port, submit_info.export_module_path + "/CurVersionPackage.db", 0, this.HandleSubmitVersionUpload.bind(this, upload_index, total_count));
 					error = await ALittle.IHttpFileSender.InvokeUpload("VersionServer.QUploadVersionFile", this._submit_client, param);
 					if (error === undefined) {
 						break;
@@ -911,7 +911,7 @@ ALittleIDE.IDEExport = JavaScript.Class(undefined, {
 		}
 		let file = ALittle.NewObject(carp.CarpLocalFile);
 		file.SetPath(ALittle.File_BaseFilePath() + "Export/Android/AndroidManifestTemplate.xml");
-		if (file.Load(false)) {
+		if (file.Load()) {
 			let content = file.GetContent();
 			content = ALittle.String_Replace(content, "abcd@package_name@abcd", package_info.install_info.package_name);
 			content = ALittle.String_Replace(content, "abcd@version_number@abcd", package_info.version_info.version_number);
@@ -1145,21 +1145,21 @@ ALittleIDE.IDEExport = JavaScript.Class(undefined, {
 		}
 		let share_file = ALittle.NewObject(carp.CarpLocalFile);
 		share_file.SetPath(package_info.export_path + "/ALittleClient.xcodeproj/project.pbxproj");
-		if (share_file.Load(false)) {
+		if (share_file.Load()) {
 			let content = share_file.GetContent();
 			content = ALittle.String_Replace(content, "abcd@package_name@abcd", package_info.install_info.package_name);
 			ALittle.File_SaveFile(package_info.export_path + "/ALittleClient.xcodeproj/project.pbxproj", content, -1);
 		}
 		share_file = ALittle.NewObject(carp.CarpLocalFile);
 		share_file.SetPath(package_info.export_path + "/ALittleClient/ALittleClient.entitlements");
-		if (share_file.Load(false)) {
+		if (share_file.Load()) {
 			let content = share_file.GetContent();
 			content = ALittle.String_Replace(content, "abcd@package_name@abcd", package_info.install_info.package_name);
 			ALittle.File_SaveFile(package_info.export_path + "/ALittleClient/ALittleClient.entitlements", content, -1);
 		}
 		share_file = ALittle.NewObject(carp.CarpLocalFile);
 		share_file.SetPath(package_info.export_path + "/ALittleClient/Info.plist");
-		if (share_file.Load(false)) {
+		if (share_file.Load()) {
 			let content = share_file.GetContent();
 			content = ALittle.String_Replace(content, "abcd@version_number@abcd", package_info.version_info.version_number);
 			content = ALittle.String_Replace(content, "abcd@app_name@abcd", package_info.install_info.install_name);
@@ -1197,7 +1197,7 @@ ALittleIDE.IDEExport = JavaScript.Class(undefined, {
 		}
 		let file = ALittle.NewObject(carp.CarpLocalFile);
 		file.SetPath(ALittle.File_BaseFilePath() + "Export/Web/index.html");
-		if (file.Load(false)) {
+		if (file.Load()) {
 			let content = file.GetContent();
 			content = ALittle.String_Replace(content, "abcd@project_name@abcd", package_info.project_name);
 			ALittle.File_SaveFile(package_info.project_path + "/Export/Web/" + package_info.project_name + ".html", content, -1);
@@ -1219,7 +1219,7 @@ ALittleIDE.IDEExport = JavaScript.Class(undefined, {
 		}
 		let game_js = ALittle.NewObject(carp.CarpLocalFile);
 		game_js.SetPath(ALittle.File_BaseFilePath() + "Export/WeChat/game.js");
-		if (game_js.Load(false)) {
+		if (game_js.Load()) {
 			let content = game_js.GetContent();
 			content = ALittle.String_Replace(content, "abcd@project_name@abcd", package_info.project_name);
 			content = ALittle.String_Replace(content, "abcd@res_ip@abcd", package_info.install_info.res_ip);
@@ -1230,7 +1230,7 @@ ALittleIDE.IDEExport = JavaScript.Class(undefined, {
 		}
 		let game_json = ALittle.NewObject(carp.CarpLocalFile);
 		game_json.SetPath(ALittle.File_BaseFilePath() + "Export/WeChat/game.json");
-		if (game_json.Load(false)) {
+		if (game_json.Load()) {
 			let content = game_json.GetContent();
 			if (package_info.install_info.screen === "竖屏") {
 				content = ALittle.String_Replace(content, "abcd@screen@abcd", "portrait");
@@ -1241,7 +1241,7 @@ ALittleIDE.IDEExport = JavaScript.Class(undefined, {
 		}
 		let project_config_json = ALittle.NewObject(carp.CarpLocalFile);
 		project_config_json.SetPath(ALittle.File_BaseFilePath() + "Export/WeChat/project.config.json");
-		if (project_config_json.Load(false)) {
+		if (project_config_json.Load()) {
 			let content = project_config_json.GetContent();
 			ALittle.File_SaveFile(package_info.project_path + "/Export/WeChat/project.config.json", content, -1);
 		}
@@ -1261,14 +1261,14 @@ ALittleIDE.IDEExport = JavaScript.Class(undefined, {
 		}
 		let file = ALittle.NewObject(carp.CarpLocalFile);
 		file.SetPath(ALittle.File_BaseFilePath() + "Export/Emscripten/index.js");
-		if (file.Load(false)) {
+		if (file.Load()) {
 			let content = file.GetContent();
 			content = ALittle.String_Replace(content, "abcd@project_name@abcd", package_info.project_name);
 			ALittle.File_SaveFile(package_info.project_path + "/Export/Emscripten/" + package_info.project_name + ".js", content, -1);
 		}
 		file = ALittle.NewObject(carp.CarpLocalFile);
 		file.SetPath(ALittle.File_BaseFilePath() + "Export/Emscripten/index.html");
-		if (file.Load(false)) {
+		if (file.Load()) {
 			let content = file.GetContent();
 			content = ALittle.String_Replace(content, "abcd@project_name@abcd", package_info.project_name);
 			ALittle.File_SaveFile(package_info.project_path + "/Export/Emscripten/" + package_info.project_name + ".html", content, -1);

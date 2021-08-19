@@ -168,7 +168,7 @@ function ALittleIDE.IDEExport:PackagePath(src_path, dst_path, file_type, crypt_m
 		ext = ALittle.String_Upper(ext)
 		local file = carp.CarpLocalFile()
 		file:SetPath(file_path)
-		Lua.Assert(file:Load(false), "IDEExport:PackagePath, 文件加载失败:" .. file_path)
+		Lua.Assert(file:Load(), "IDEExport:PackagePath, 文件加载失败:" .. file_path)
 		if crypt_mode then
 			file:Encrypt(nil)
 		end
@@ -349,7 +349,7 @@ end
 function ALittleIDE.IDEExport:HandleAskNewUpdateTimeIndexImpl(package_info, is_login, update_time, update_index)
 	local ___COROUTINE = coroutine.running()
 	if is_login then
-		g_AUITool:ShowAlertDialog("提示", "正在请求CurVersion.db的文件的位置")
+		g_AUITool:ShowAlertDialog("提示", "正在请求CurVersionPackage.db的文件的位置")
 		local param = {}
 		param.__account_id = ALittleIDE.g_IDEWebLoginManager.account_id
 		param.__session_id = ALittleIDE.g_IDEWebLoginManager.session_id
@@ -367,7 +367,7 @@ function ALittleIDE.IDEExport:HandleQueryNewCurVersion(error, result, package_in
 	local ___COROUTINE = coroutine.running()
 	g_AUITool:HideAlertDialog()
 	if error ~= nil then
-		g_AUITool:ShowNotice("错误", "CurVersion.db的文件的位置获取失败:" .. error)
+		g_AUITool:ShowNotice("错误", "CurVersionPackage.db的文件的位置获取失败:" .. error)
 		return
 	end
 	if result.version_info == nil or result.version_info.version_id == nil or result.version_info.version_id == "" then
@@ -379,7 +379,7 @@ function ALittleIDE.IDEExport:HandleQueryNewCurVersion(error, result, package_in
 		local param = {}
 		param.platform = package_info.platform
 		param.version_id = result.version_info.version_id
-		param.file_path = "CurVersion.db"
+		param.file_path = "CurVersionPackage.db"
 		local client = ALittle.CreateHttpFileSender(result.http_ip, result.http_port, target_path, 0)
 		error = ALittle.IHttpFileSender.InvokeDownload("VersionServer.QDownloadVersionFile", client, param)
 		self:HandleDownloadCurVersion(error, package_info, is_login, update_time, update_index)
@@ -408,14 +408,14 @@ function ALittleIDE.IDEExport:HandleQueryNewCurVersionImpl(package_info, is_logi
 		local db_version_path = package_info.project_path .. "/Export/CurVersionOld_" .. package_info.platform .. ".db"
 		local sqlite = sqlite3.open(db_version_path)
 		if sqlite == nil then
-			g_AUITool:ShowNotice("错误", "CurVersion.db文件打开失败")
+			g_AUITool:ShowNotice("错误", "CurVersionPackage.db文件打开失败")
 			return
 		end
 		version_info = {}
 		local stmt = sqlite:prepare("SELECT * FROM BigVersion")
 		if stmt == nil then
 			sqlite:close()
-			g_AUITool:ShowNotice("错误", "CurVersion.db中BigVersion读取失败")
+			g_AUITool:ShowNotice("错误", "CurVersionPackage.db中BigVersion读取失败")
 			return
 		end
 		for row in stmt:nrows() do
@@ -425,7 +425,7 @@ function ALittleIDE.IDEExport:HandleQueryNewCurVersionImpl(package_info, is_logi
 		stmt = sqlite:prepare("SELECT * FROM SmallVersion")
 		if stmt == nil then
 			sqlite:close()
-			g_AUITool:ShowNotice("错误", "CurVersion.db中SmallVersion读取失败")
+			g_AUITool:ShowNotice("错误", "CurVersionPackage.db中SmallVersion读取失败")
 			return
 		end
 		version_info.small_version = {}
@@ -462,11 +462,11 @@ function ALittleIDE.IDEExport:HandleQueryNewCurVersionImpl(package_info, is_logi
 	local submit_info = {}
 	submit_info.upload_list = {}
 	local update_list_count = 0
-	g_AUITool:ShowAlertDialog("提示", "生成新的CurVersion.db")
+	g_AUITool:ShowAlertDialog("提示", "生成新的CurVersionPackage.db")
 	ALittle.System_Render()
 	local package_notice = ""
-	ALittle.File_DeleteFile(package_info.export_module_path .. "/CurVersion.db")
-	local sqlite = sqlite3.open(package_info.export_module_path .. "/CurVersion.db")
+	ALittle.File_DeleteFile(package_info.export_module_path .. "/CurVersionPackage.db")
+	local sqlite = sqlite3.open(package_info.export_module_path .. "/CurVersionPackage.db")
 	if sqlite ~= nil then
 		local sql = "CREATE TABLE IF NOT EXISTS [BigVersion] ("
 		sql = sql .. "[c_big_version] [nvarchar](255) NOT NULL default '',"
@@ -564,7 +564,7 @@ function ALittleIDE.IDEExport:HandleQueryNewCurVersionImpl(package_info, is_logi
 		end
 		sqlite:exec("VACUUM;")
 		sqlite:close()
-		ALittle.File_CopyFile(package_info.export_module_path .. "/CurVersion.db", package_info.export_module_path .. "/CurVersionNoDelete.db")
+		ALittle.File_CopyFile(package_info.export_module_path .. "/CurVersionPackage.db", package_info.export_module_path .. "/CurVersionNoDelete.db")
 		local sqlite_no_delete = sqlite3.open(package_info.export_module_path .. "/CurVersionNoDelete.db")
 		if sqlite_no_delete == nil then
 			g_AUITool:ShowNotice("错误", "CurVersionNoDelete.db文件生成失败:" .. package_info.export_module_path .. "/CurVersionNoDelete.db")
@@ -575,7 +575,7 @@ function ALittleIDE.IDEExport:HandleQueryNewCurVersionImpl(package_info, is_logi
 		sqlite_no_delete:exec("UPDATE BigVersion SET c_db_version='" .. db_version .. "'")
 		sqlite_no_delete:exec("VACUUM;")
 		sqlite_no_delete:close()
-		local sqlite_attr = ALittle.File_GetFileAttr(package_info.export_module_path .. "/CurVersion.db")
+		local sqlite_attr = ALittle.File_GetFileAttr(package_info.export_module_path .. "/CurVersionPackage.db")
 		local sqlite_no_delete_attr = ALittle.File_GetFileAttr(package_info.export_module_path .. "/CurVersionNoDelete.db")
 		package_notice = "\n文件添加数量:" .. add_count .. "\n文件删除数量:" .. delete_count .. "\n文件修改数量:" .. change_count .. "\n原始DB文件大小:" .. sqlite_attr.size .. "\n优化DB文件大小:" .. sqlite_no_delete_attr.size
 		local need_use_no_delete = false
@@ -590,8 +590,8 @@ function ALittleIDE.IDEExport:HandleQueryNewCurVersionImpl(package_info, is_logi
 			end
 		end
 		if need_use_no_delete then
-			ALittle.File_DeleteFile(package_info.export_module_path .. "/CurVersion.db")
-			ALittle.File_RenameFile(package_info.export_module_path .. "/CurVersionNodelete.db", package_info.export_module_path .. "/CurVersion.db")
+			ALittle.File_DeleteFile(package_info.export_module_path .. "/CurVersionPackage.db")
+			ALittle.File_RenameFile(package_info.export_module_path .. "/CurVersionNodelete.db", package_info.export_module_path .. "/CurVersionPackage.db")
 		else
 			ALittle.File_DeleteFile(package_info.export_module_path .. "/CurVersionNodelete.db")
 		end
@@ -601,7 +601,7 @@ function ALittleIDE.IDEExport:HandleQueryNewCurVersionImpl(package_info, is_logi
 			return
 		end
 	else
-		g_AUITool:ShowNotice("错误", "CurVersion.db文件生成失败:" .. package_info.export_module_path .. "/CurVersion.db")
+		g_AUITool:ShowNotice("错误", "CurVersionPackage.db文件生成失败:" .. package_info.export_module_path .. "/CurVersionPackage.db")
 		return
 	end
 	g_AUITool:ShowAlertDialog("提示", "开始打包安装包")
@@ -779,14 +779,14 @@ function ALittleIDE.IDEExport:HandleNewVersionInfoImpl(submit_info)
 	end
 	do
 		upload_index = upload_index + 1
-		self._submit_content.text = "正在上传:" .. upload_index .. "/" .. total_count .. "\n" .. submit_info.export_module_path .. "/CurVersion.db"
-		param.file_path = "CurVersion.db"
+		self._submit_content.text = "正在上传:" .. upload_index .. "/" .. total_count .. "\n" .. submit_info.export_module_path .. "/CurVersionPackage.db"
+		param.file_path = "CurVersionPackage.db"
 		param.__account_id = ALittleIDE.g_IDEWebLoginManager.account_id
 		param.__session_id = ALittleIDE.g_IDEWebLoginManager.session_id
 		local repeat_count = 0
 		while repeat_count < 100 do
 			repeat_count = repeat_count + 1
-			self._submit_client = ALittle.CreateHttpFileSender(ALittleIDE.g_IDEWebLoginManager.http_ip, ALittleIDE.g_IDEWebLoginManager.http_port, submit_info.export_module_path .. "/CurVersion.db", 0, Lua.Bind(self.HandleSubmitVersionUpload, self, upload_index, total_count))
+			self._submit_client = ALittle.CreateHttpFileSender(ALittleIDE.g_IDEWebLoginManager.http_ip, ALittleIDE.g_IDEWebLoginManager.http_port, submit_info.export_module_path .. "/CurVersionPackage.db", 0, Lua.Bind(self.HandleSubmitVersionUpload, self, upload_index, total_count))
 			error = ALittle.IHttpFileSender.InvokeUpload("VersionServer.QUploadVersionFile", self._submit_client, param)
 			if error == nil then
 				break
@@ -882,7 +882,7 @@ function ALittleIDE.IDEExport:GenerateApk(package_info)
 	end
 	local file = carp.CarpLocalFile()
 	file:SetPath(ALittle.File_BaseFilePath() .. "Export/Android/AndroidManifestTemplate.xml")
-	if file:Load(false) then
+	if file:Load() then
 		local content = file:GetContent()
 		content = ALittle.String_Replace(content, "abcd@package_name@abcd", package_info.install_info.package_name)
 		content = ALittle.String_Replace(content, "abcd@version_number@abcd", package_info.version_info.version_number)
@@ -1111,21 +1111,21 @@ function ALittleIDE.IDEExport:GenerateIpa(package_info)
 	end
 	local share_file = carp.CarpLocalFile()
 	share_file:SetPath(package_info.export_path .. "/ALittleClient.xcodeproj/project.pbxproj")
-	if share_file:Load(false) then
+	if share_file:Load() then
 		local content = share_file:GetContent()
 		content = ALittle.String_Replace(content, "abcd@package_name@abcd", package_info.install_info.package_name)
 		ALittle.File_SaveFile(package_info.export_path .. "/ALittleClient.xcodeproj/project.pbxproj", content, -1)
 	end
 	share_file = carp.CarpLocalFile()
 	share_file:SetPath(package_info.export_path .. "/ALittleClient/ALittleClient.entitlements")
-	if share_file:Load(false) then
+	if share_file:Load() then
 		local content = share_file:GetContent()
 		content = ALittle.String_Replace(content, "abcd@package_name@abcd", package_info.install_info.package_name)
 		ALittle.File_SaveFile(package_info.export_path .. "/ALittleClient/ALittleClient.entitlements", content, -1)
 	end
 	share_file = carp.CarpLocalFile()
 	share_file:SetPath(package_info.export_path .. "/ALittleClient/Info.plist")
-	if share_file:Load(false) then
+	if share_file:Load() then
 		local content = share_file:GetContent()
 		content = ALittle.String_Replace(content, "abcd@version_number@abcd", package_info.version_info.version_number)
 		content = ALittle.String_Replace(content, "abcd@app_name@abcd", package_info.install_info.install_name)
@@ -1164,7 +1164,7 @@ function ALittleIDE.IDEExport:GenerateWeb(package_info)
 	end
 	local file = carp.CarpLocalFile()
 	file:SetPath(ALittle.File_BaseFilePath() .. "Export/Web/index.html")
-	if file:Load(false) then
+	if file:Load() then
 		local content = file:GetContent()
 		content = ALittle.String_Replace(content, "abcd@project_name@abcd", package_info.project_name)
 		ALittle.File_SaveFile(package_info.project_path .. "/Export/Web/" .. package_info.project_name .. ".html", content, -1)
@@ -1187,7 +1187,7 @@ function ALittleIDE.IDEExport:GenerateWeChat(package_info)
 	end
 	local game_js = carp.CarpLocalFile()
 	game_js:SetPath(ALittle.File_BaseFilePath() .. "Export/WeChat/game.js")
-	if game_js:Load(false) then
+	if game_js:Load() then
 		local content = game_js:GetContent()
 		content = ALittle.String_Replace(content, "abcd@project_name@abcd", package_info.project_name)
 		content = ALittle.String_Replace(content, "abcd@res_ip@abcd", package_info.install_info.res_ip)
@@ -1198,7 +1198,7 @@ function ALittleIDE.IDEExport:GenerateWeChat(package_info)
 	end
 	local game_json = carp.CarpLocalFile()
 	game_json:SetPath(ALittle.File_BaseFilePath() .. "Export/WeChat/game.json")
-	if game_json:Load(false) then
+	if game_json:Load() then
 		local content = game_json:GetContent()
 		if package_info.install_info.screen == "竖屏" then
 			content = ALittle.String_Replace(content, "abcd@screen@abcd", "portrait")
@@ -1209,7 +1209,7 @@ function ALittleIDE.IDEExport:GenerateWeChat(package_info)
 	end
 	local project_config_json = carp.CarpLocalFile()
 	project_config_json:SetPath(ALittle.File_BaseFilePath() .. "Export/WeChat/project.config.json")
-	if project_config_json:Load(false) then
+	if project_config_json:Load() then
 		local content = project_config_json:GetContent()
 		ALittle.File_SaveFile(package_info.project_path .. "/Export/WeChat/project.config.json", content, -1)
 	end
@@ -1230,14 +1230,14 @@ function ALittleIDE.IDEExport:GenerateEmscripten(package_info)
 	end
 	local file = carp.CarpLocalFile()
 	file:SetPath(ALittle.File_BaseFilePath() .. "Export/Emscripten/index.js")
-	if file:Load(false) then
+	if file:Load() then
 		local content = file:GetContent()
 		content = ALittle.String_Replace(content, "abcd@project_name@abcd", package_info.project_name)
 		ALittle.File_SaveFile(package_info.project_path .. "/Export/Emscripten/" .. package_info.project_name .. ".js", content, -1)
 	end
 	file = carp.CarpLocalFile()
 	file:SetPath(ALittle.File_BaseFilePath() .. "Export/Emscripten/index.html")
-	if file:Load(false) then
+	if file:Load() then
 		local content = file:GetContent()
 		content = ALittle.String_Replace(content, "abcd@project_name@abcd", package_info.project_name)
 		ALittle.File_SaveFile(package_info.project_path .. "/Export/Emscripten/" .. package_info.project_name .. ".html", content, -1)
