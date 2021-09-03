@@ -567,6 +567,7 @@ function ALittleIDE.IDEExport:HandleQueryNewCurVersionImpl(package_info, is_logi
 		ALittle.File_CopyFile(package_info.export_module_path .. "/CurVersionPackage.db", package_info.export_module_path .. "/CurVersionNoDelete.db")
 		local sqlite_no_delete = sqlite3.open(package_info.export_module_path .. "/CurVersionNoDelete.db")
 		if sqlite_no_delete == nil then
+			g_AUITool:HideAlertDialog()
 			g_AUITool:ShowNotice("错误", "CurVersionNoDelete.db文件生成失败:" .. package_info.export_module_path .. "/CurVersionNoDelete.db")
 			return
 		end
@@ -601,6 +602,7 @@ function ALittleIDE.IDEExport:HandleQueryNewCurVersionImpl(package_info, is_logi
 			return
 		end
 	else
+		g_AUITool:HideAlertDialog()
 		g_AUITool:ShowNotice("错误", "CurVersionPackage.db文件生成失败:" .. package_info.export_module_path .. "/CurVersionPackage.db")
 		return
 	end
